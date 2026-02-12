@@ -20,6 +20,8 @@ import ClientInventory from './pages/client/ClientInventory';
 import ClientOrders from './pages/client/ClientOrders';
 import ClientReceipts from './pages/client/ClientReceipts';
 import ClientInvoices from './pages/client/ClientInvoices';
+import Profile from './pages/Profile';
+import ClientProfile from './pages/client/ClientProfile';
 import './App.css';
 
 // Protected route component
@@ -91,6 +93,7 @@ const AppContent = () => {
           <Route path="/inventory" element={<AdminRoute><Inventory /></AdminRoute>} />
           <Route path="/receipts" element={<AdminRoute><Receipts /></AdminRoute>} />
           <Route path="/orders" element={<AdminRoute><Orders /></AdminRoute>} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/integrations" element={<AdminRoute><Integrations /></AdminRoute>} />
           <Route path="/inventory-counts" element={<AdminRoute><InventoryCounts /></AdminRoute>} />
           <Route path="/clients" element={<AdminRoute><Clients /></AdminRoute>} />
@@ -104,6 +107,7 @@ const AppContent = () => {
           <Route path="/client/orders" element={<ClientRoute><ClientOrders /></ClientRoute>} />
           <Route path="/client/receipts" element={<ClientRoute><ClientReceipts /></ClientRoute>} />
           <Route path="/client/invoices" element={<ClientRoute><ClientInvoices /></ClientRoute>} />
+          <Route path="/client/profile" element={<ClientRoute><ClientProfile /></ClientRoute>} />
           
           {/* Default redirect based on role */}
           <Route path="*" element={
