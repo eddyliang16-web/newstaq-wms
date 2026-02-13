@@ -90,25 +90,7 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <p className="text-sm text-slate-500 text-center mb-4">Comptes de démonstration :</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-slate-50 p-3 rounded-lg">
-                <div className="flex items-center gap-2 text-slate-700 mb-1">
-                  <User size={14} />
-                  <span className="text-xs font-medium">Admin</span>
-                </div>
-                <p className="text-xs text-slate-500"><strong>admin</strong> / admin123</p>
-              </div>
-              <div className="bg-emerald-50 p-3 rounded-lg">
-                <div className="flex items-center gap-2 text-emerald-700 mb-1">
-                  <Building2 size={14} />
-                  <span className="text-xs font-medium">Client</span>
-                </div>
-                <p className="text-xs text-slate-500"><strong>techstore</strong> / client123</p>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
