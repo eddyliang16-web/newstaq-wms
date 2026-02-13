@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Home, Package, ShoppingCart, ClipboardList, BarChart3, 
-  Users, LogOut, Menu, X, Warehouse, DollarSign, LayoutDashboard, Link2, Bell
+  Users, User, LogOut, Menu, X, Warehouse, DollarSign, LayoutDashboard, Link2, Bell
 } from 'lucide-react';
 
 const Navigation = () => {
@@ -24,6 +24,7 @@ const Navigation = () => {
     { path: '/billing', icon: DollarSign, label: 'Facturation' },
     { path: '/notifications', icon: Bell, label: 'Notifications' },
     { path: '/clients', icon: Users, label: 'Clients' },
+    { path: '/profile', icon: User, label: 'Mon Profil' },
   ];
 
   const clientNavItems = [
@@ -33,6 +34,8 @@ const Navigation = () => {
     { path: '/client/orders', icon: ShoppingCart, label: 'Mes Commandes' },
     { path: '/client/receipts', icon: ClipboardList, label: 'Mes Réceptions' },
     { path: '/client/invoices', icon: DollarSign, label: 'Mes Factures' },
+    { path: '/client/profile', icon: User, label: 'Mon Profil' },
+
   ];
 
   const navItems = isClient ? clientNavItems : adminNavItems;
