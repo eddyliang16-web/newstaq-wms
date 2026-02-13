@@ -206,101 +206,131 @@ const LandingPage = () => {
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle}>Tarification Transparente</h2>
           <p style={styles.sectionSubtitle}>
-            Adapté à votre volume d'activité, sans engagement
+            Des prix clairs et compétitifs adaptés à votre activité
           </p>
-          <div style={styles.pricingGrid}>
-            <div style={styles.pricingCard}>
-              <h3 style={styles.pricingTitle}>Starter</h3>
-              <div style={styles.pricingPrice}>
-                <span style={styles.priceAmount}>Sur Devis</span>
+          
+          <div style={styles.pricingCategoriesGrid}>
+            {/* Stockage */}
+            <div style={styles.categoryCard}>
+              <div style={{...styles.categoryHeader, backgroundColor: '#3b82f6'}}>
+                <span style={styles.categoryIcon}>📦</span>
+                <h3 style={styles.categoryTitle}>Stockage</h3>
               </div>
-              <ul style={styles.pricingFeatures}>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Jusqu'à 500 commandes/mois
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  5 intégrations e-commerce
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Support email
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Portail client inclus
-                </li>
-              </ul>
-              <a href="#contact" style={styles.pricingButton}>
-                Demander un Devis
-              </a>
+              <div style={styles.categoryBody}>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Palette EU standard 80cm x 120cm x 150cm</span>
+                  <span style={styles.priceValue}>10€ / mois</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Stockage volumétrique au m³</span>
+                  <span style={styles.priceValue}>7€ / m³ / mois</span>
+                </div>
+              </div>
             </div>
 
-            <div style={{...styles.pricingCard, ...styles.pricingCardFeatured}}>
-              <div style={styles.popularBadge}>Populaire</div>
-              <h3 style={styles.pricingTitle}>Business</h3>
-              <div style={styles.pricingPrice}>
-                <span style={styles.priceAmount}>Sur Devis</span>
+            {/* Entrée de Marchandises */}
+            <div style={styles.categoryCard}>
+              <div style={{...styles.categoryHeader, backgroundColor: '#10b981'}}>
+                <span style={styles.categoryIcon}>📥</span>
+                <h3 style={styles.categoryTitle}>Entrée de Marchandises</h3>
               </div>
-              <ul style={styles.pricingFeatures}>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Jusqu'à 5000 commandes/mois
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Intégrations illimitées
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Support prioritaire 24/7
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  API personnalisée
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Formation sur mesure
-                </li>
-              </ul>
-              <a href="#contact" style={styles.pricingButtonFeatured}>
-                Demander un Devis
-              </a>
+              <div style={styles.categoryBody}>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Réception d'une palette</span>
+                  <span style={styles.priceValue}>3€ / palette</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Réception d'un colis</span>
+                  <span style={styles.priceValue}>1€ / colis</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Entrée et saisie des stocks sur WMS</span>
+                  <span style={styles.priceValue}>2,50€ / SKU</span>
+                </div>
+              </div>
             </div>
 
-            <div style={styles.pricingCard}>
-              <h3 style={styles.pricingTitle}>Enterprise</h3>
-              <div style={styles.pricingPrice}>
-                <span style={styles.priceAmount}>Sur Devis</span>
+            {/* Sortie de Marchandises */}
+            <div style={styles.categoryCard}>
+              <div style={{...styles.categoryHeader, backgroundColor: '#f59e0b'}}>
+                <span style={styles.categoryIcon}>📤</span>
+                <h3 style={styles.categoryTitle}>Sortie de Marchandises</h3>
               </div>
-              <ul style={styles.pricingFeatures}>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Volume illimité
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Multi-entrepôts
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Account manager dédié
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  SLA garanti
-                </li>
-                <li style={styles.pricingFeature}>
-                  <Check size={20} color="#10b981" />
-                  Développements sur mesure
-                </li>
-              </ul>
-              <a href="#contact" style={styles.pricingButton}>
-                Nous Contacter
-              </a>
+              <div style={styles.categoryBody}>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Pick & pack d'un article</span>
+                  <span style={styles.priceValue}>2,80€ / commande</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Pour tout article supplémentaire</span>
+                  <span style={styles.priceValue}>+0,20€ / article</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Packing sur mesure selon instructions</span>
+                  <span style={styles.priceValue}>Sur devis</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Fourniture carton packaging</span>
+                  <span style={styles.priceValue}>Sur devis</span>
+                </div>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Expédition</span>
+                  <span style={styles.priceValue}>Selon transporteur</span>
+                </div>
+              </div>
             </div>
+
+            {/* Gestion des Retours */}
+            <div style={styles.categoryCard}>
+              <div style={{...styles.categoryHeader, backgroundColor: '#8b5cf6'}}>
+                <span style={styles.categoryIcon}>🔄</span>
+                <h3 style={styles.categoryTitle}>Gestion des Retours</h3>
+              </div>
+              <div style={styles.categoryBody}>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Réception et traitement des retours</span>
+                  <span style={styles.priceValue}>2,20€ / retour</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Assurance */}
+            <div style={styles.categoryCard}>
+              <div style={{...styles.categoryHeader, backgroundColor: '#ef4444'}}>
+                <span style={styles.categoryIcon}>🛡️</span>
+                <h3 style={styles.categoryTitle}>Assurance</h3>
+              </div>
+              <div style={styles.categoryBody}>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Basé sur la valeur d'achat des marchandises</span>
+                  <span style={styles.priceValue}>Sur devis</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Mise en Place */}
+            <div style={styles.categoryCard}>
+              <div style={{...styles.categoryHeader, backgroundColor: '#06b6d4'}}>
+                <span style={styles.categoryIcon}>🚀</span>
+                <h3 style={styles.categoryTitle}>Mise en Place</h3>
+              </div>
+              <div style={styles.categoryBody}>
+                <div style={styles.priceItem}>
+                  <span style={styles.priceService}>Frais administratif de mise en place</span>
+                  <span style={styles.priceValue}>49€</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div style={styles.pricingCTA}>
+            <p style={styles.ctaText}>
+              Besoin d'un devis personnalisé adapté à vos besoins spécifiques ?
+            </p>
+            <a href="#contact" style={styles.ctaButton}>
+              Demander un Devis Gratuit
+            </a>
           </div>
         </div>
       </section>
@@ -708,93 +738,83 @@ const styles = {
     padding: '6rem 2rem',
     backgroundColor: '#f8fafc',
   },
-  pricingGrid: {
+  pricingCategoriesGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
     gap: '2rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
+    maxWidth: '1400px',
+    margin: '0 auto 4rem',
   },
-  pricingCard: {
+  categoryCard: {
     backgroundColor: 'white',
     borderRadius: '1rem',
-    padding: '2.5rem',
-    border: '2px solid #e2e8f0',
-    position: 'relative',
-    transition: 'all 0.3s',
+    overflow: 'hidden',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    transition: 'transform 0.3s, box-shadow 0.3s',
   },
-  pricingCardFeatured: {
-    border: '2px solid #3b82f6',
-    boxShadow: '0 10px 30px rgba(59, 130, 246, 0.2)',
-  },
-  popularBadge: {
-    position: 'absolute',
-    top: '-12px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    backgroundColor: '#3b82f6',
+  categoryHeader: {
+    padding: '1.5rem',
     color: 'white',
-    padding: '0.375rem 1rem',
-    borderRadius: '9999px',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-  },
-  pricingTitle: {
-    fontSize: '1.75rem',
-    fontWeight: 'bold',
-    color: '#0f172a',
-    marginBottom: '1rem',
-  },
-  pricingPrice: {
-    marginBottom: '2rem',
-  },
-  priceAmount: {
-    fontSize: '2.5rem',
-    fontWeight: 'bold',
-    color: '#3b82f6',
-  },
-  pricingFeatures: {
-    listStyle: 'none',
-    padding: 0,
-    marginBottom: '2rem',
-  },
-  pricingFeature: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.75rem',
-    padding: '0.75rem 0',
-    fontSize: '1rem',
-    color: '#475569',
   },
-  pricingButton: {
-    display: 'block',
-    width: '100%',
-    padding: '1rem',
+  categoryIcon: {
+    fontSize: '2rem',
+  },
+  categoryTitle: {
+    fontSize: '1.25rem',
+    fontWeight: '600',
+    margin: 0,
+  },
+  categoryBody: {
+    padding: '1.5rem',
+  },
+  priceItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    padding: '1rem 0',
+    borderBottom: '1px solid #e2e8f0',
+  },
+  priceService: {
+    fontSize: '0.95rem',
+    color: '#334155',
+    flex: 1,
+    paddingRight: '1rem',
+  },
+  priceValue: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#0f172a',
+    whiteSpace: 'nowrap',
+  },
+  pricingCTA: {
+    textAlign: 'center',
+    padding: '3rem 2rem',
     backgroundColor: 'white',
-    color: '#3b82f6',
-    border: '2px solid #3b82f6',
-    borderRadius: '0.75rem',
-    fontSize: '1rem',
-    fontWeight: '600',
-    textAlign: 'center',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
+    borderRadius: '1rem',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    maxWidth: '800px',
+    margin: '0 auto',
   },
-  pricingButtonFeatured: {
-    display: 'block',
-    width: '100%',
-    padding: '1rem',
-    backgroundColor: '#3b82f6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.75rem',
-    fontSize: '1rem',
+  ctaText: {
+    fontSize: '1.25rem',
+    color: '#475569',
+    marginBottom: '1.5rem',
+  },
+  ctaButton: {
+    display: 'inline-block',
+    padding: '1rem 2.5rem',
+    fontSize: '1.125rem',
     fontWeight: '600',
-    textAlign: 'center',
+    color: 'white',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '0.5rem',
     textDecoration: 'none',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'background-color 0.3s',
   },
   contactSection: {
     padding: '6rem 2rem',
