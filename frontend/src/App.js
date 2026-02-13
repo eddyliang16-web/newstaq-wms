@@ -23,6 +23,9 @@ import ClientInvoices from './pages/client/ClientInvoices';
 import Profile from './pages/Profile';
 import ClientProfile from './pages/client/ClientProfile';
 import './App.css';
+import MentionsLegales from './pages/MentionsLegales';
+import CGV from './pages/CGV';
+import RGPD from './pages/RGPD';
 
 // Protected route component
 const PrivateRoute = ({ children }) => {
@@ -86,6 +89,9 @@ const AppContent = () => {
           {/* Public Landing Page */}
           <Route path="/" element={isAuthenticated ? (isClient ? <Navigate to="/client" /> : <Navigate to="/dashboard" />) : <LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/cgv" element={<CGV />} />
+          <Route path="/rgpd" element={<RGPD />} />
           
           {/* Admin Routes */}
           <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
