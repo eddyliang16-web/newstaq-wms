@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Package, Warehouse, ShoppingCart, TrendingUp, 
   BarChart3, Clock, Shield, Zap, ChevronRight,
@@ -488,9 +488,9 @@ const LandingPage = () => {
 
           <div style={styles.footerSection}>
             <h4 style={styles.footerTitle}>Légal</h4>
-            <a href="#" style={styles.footerLink}>Mentions légales</a>
-            <a href="#" style={styles.footerLink}>CGV</a>
-            <a href="#" style={styles.footerLink}>RGPD</a>
+            <Link to="/mentions-legales" style={styles.footerLink}>Mentions légales</Link>
+            <Link to="/cgv" style={styles.footerLink}>CGV</Link>
+            <Link to="/rgpd" style={styles.footerLink}>RGPD</Link>
           </div>
         </div>
 
