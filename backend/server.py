@@ -326,9 +326,9 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
     
     # Build client filter
     if user['role'] == 'client':
-        client_filter = {'client_id': ObjectId(user['client_id'])}
+        client_filter = {'client_id': user['client_id']}
     elif client_id:
-        client_filter = {'client_id': ObjectId(client_id)}
+        client_filter = {'client_id': client_id}
     else:
         client_filter = {}
     
@@ -436,9 +436,9 @@ def get_products(request: Request, client_id: Optional[str] = None):
     
     query = {'active': True}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     pipeline = [
         {'$match': query},
@@ -494,9 +494,9 @@ def get_inventory(request: Request, client_id: Optional[str] = None):
     
     match_stage = {}
     if user['role'] == 'client':
-        match_stage['client_id'] = ObjectId(user['client_id'])
+        match_stage['client_id'] = user['client_id']
     elif client_id:
-        match_stage['client_id'] = ObjectId(client_id)
+        match_stage['client_id'] = client_id
     
     pipeline = [
         {'$match': match_stage} if match_stage else {'$match': {}},
@@ -526,9 +526,9 @@ def get_orders(request: Request, client_id: Optional[str] = None, status: Option
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     if status:
         query['status'] = status
     
@@ -579,9 +579,9 @@ def get_receipts(request: Request, client_id: Optional[str] = None, status: Opti
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     if status:
         query['status'] = status
     
@@ -629,9 +629,9 @@ def get_inventory_counts(request: Request, client_id: Optional[str] = None):
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     counts = list(db.inventory_counts.find(query).sort('created_at', -1).limit(50))
     return serialize_doc(counts)
@@ -643,9 +643,9 @@ def get_invoices(request: Request, client_id: Optional[str] = None):
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     pipeline = [
         {'$match': query},
@@ -737,9 +737,9 @@ def get_integrations(request: Request, client_id: Optional[str] = None):
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     pipeline = [
         {'$match': query},
@@ -1000,9 +1000,9 @@ def get_notification_settings(request: Request, client_id: Optional[str] = None)
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     settings = list(db.notification_settings.find(query))
     return serialize_doc(settings)
