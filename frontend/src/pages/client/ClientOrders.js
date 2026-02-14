@@ -31,7 +31,7 @@ const ClientOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await api.get('/orders/client');
+      const response = await api.get('/orders');
       setOrders(response.data);
     } catch (error) {
       console.error('Erreur chargement commandes:', error);
@@ -42,7 +42,7 @@ const ClientOrders = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/products/client');
+      const response = await api.get('/products');
       setProducts(response.data);
     } catch (error) {
       console.error('Erreur chargement produits:', error);
