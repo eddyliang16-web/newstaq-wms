@@ -314,7 +314,7 @@ def get_me(request: Request):
     user = get_current_user(request)
     client_name = None
     if user.get('client_id'):
-        client = db.clients.find_one({'_id': ObjectId(user['client_id'])})
+        client = db.clients.find_one({'_id': user['client_id']})
         client_name = client['name'] if client else None
     user['client_name'] = client_name
     return user
