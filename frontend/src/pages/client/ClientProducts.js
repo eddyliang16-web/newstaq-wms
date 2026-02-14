@@ -28,7 +28,7 @@ const ClientProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/products/client');
+      const response = await api.get('/products');
       setProducts(response.data);
       setFilteredProducts(response.data);
     } catch (error) {
