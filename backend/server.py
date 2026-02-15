@@ -366,11 +366,20 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
         total_stock = total_stock_result[0]['total'] if total_stock_result else 0
     
     # Orders stats
-    orders_total = db.orders.count_documents(client_filter) if client_filter else db.orders.count_documents({})
-    orders_pending = db.orders.count_documents({**client_filter, 'status': 'pending'}) if client_filter else db.orders.count_documents({'status': 'pending'})
+    if client_filter:
+        orders_total = db.orders.count_documents(client_filter)
+        orders_pending = db.orders.count_documents({**client_filter, 'status': 'pending'})
+    else:
+        # Admin: exclude demos
+        orders_total = db.orders.count_documents({'client_id': {'$in': non_demo_client_ids}})
+        orders_pending = db.orders.count_documents({'client_id': {'$in': non_demo_client_ids}, 'status': 'pending'})
     
     # Receipts stats
-    receipts_pending = db.receipts.count_documents({**client_filter, 'status': {'$in': ['planned', 'in_progress']}}) if client_filter else db.receipts.count_documents({'status': {'$in': ['planned', 'in_progress']}})
+    if client_filter:
+        receipts_pending = db.receipts.count_documents({**client_filter, 'status': {'$in': ['planned', 'in_progress']}})
+    else:
+        # Admin: exclude demos
+        receipts_pending = db.receipts.count_documents({'client_id': {'$in': non_demo_client_ids}, 'status': {'$in': ['planned', 'in_progress']}})
     
     # Low stock products
     if client_filter:
@@ -455,6 +464,17 @@ def get_products(request: Request, client_id: Optional[str] = None):
         query['client_id'] = user['client_id']
     elif client_id:
         query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None  # Return empty
     
     pipeline = [
         {'$match': query},
@@ -513,6 +533,17 @@ def get_inventory(request: Request, client_id: Optional[str] = None):
         match_stage['client_id'] = user['client_id']
     elif client_id:
         match_stage['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            match_stage['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            match_stage['client_id'] = None
     
     pipeline = [
         {'$match': match_stage} if match_stage else {'$match': {}},
@@ -545,6 +576,17 @@ def get_orders(request: Request, client_id: Optional[str] = None, status: Option
         query['client_id'] = user['client_id']
     elif client_id:
         query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None
     if status:
         query['status'] = status
     
@@ -598,6 +640,17 @@ def get_receipts(request: Request, client_id: Optional[str] = None, status: Opti
         query['client_id'] = user['client_id']
     elif client_id:
         query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None
     if status:
         query['status'] = status
     
