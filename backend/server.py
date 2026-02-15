@@ -314,7 +314,7 @@ def get_me(request: Request):
     user = get_current_user(request)
     client_name = None
     if user.get('client_id'):
-        client = db.clients.find_one({'_id': user['client_id']})
+        client = db.clients.find_one({'_id': ObjectId(user['client_id'])})
         client_name = client['name'] if client else None
     user['client_name'] = client_name
     return user
@@ -345,8 +345,24 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
         stock_result = list(db.products.aggregate(pipeline))
         total_stock = stock_result[0]['total'] if stock_result else 0
     else:
-        products_count = db.products.count_documents({'active': True})
-        total_stock_result = list(db.inventory.aggregate([{'$group': {'_id': None, 'total': {'$sum': '$quantity'}}}]))
+        # Admin viewing all: exclude demo clients
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        
+        products_count = db.products.count_documents({
+            'active': True,
+            'client_id': {'$in': non_demo_client_ids}
+        })
+        
+        total_stock_result = list(db.inventory.aggregate([
+            {'$lookup': {'from': 'products', 'localField': 'product_id', 'foreignField': '_id', 'as': 'product'}},
+            {'$unwind': '$product'},
+            {'$match': {'product.client_id': {'$in': non_demo_client_ids}}},
+            {'$group': {'_id': None, 'total': {'$sum': '$quantity'}}}
+        ]))
         total_stock = total_stock_result[0]['total'] if total_stock_result else 0
     
     # Orders stats
