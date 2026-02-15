@@ -528,28 +528,33 @@ def create_product(data: ProductCreate, request: Request):
 def get_inventory(request: Request, client_id: Optional[str] = None):
     user = get_current_user(request)
     
-    match_stage = {}
-    if user['role'] == 'client':
-        match_stage['client_id'] = user['client_id']
-    elif client_id:
-        match_stage['client_id'] = client_id
-    else:
-        # Admin without client_id: exclude demos
-        non_demo_clients = list(db.clients.find(
-            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
-            {'_id': 1}
-        ))
-        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
-        if non_demo_client_ids:
-            match_stage['client_id'] = {'$in': non_demo_client_ids}
-        else:
-            match_stage['client_id'] = None
-    
+    # Build base pipeline
     pipeline = [
-        {'$match': match_stage} if match_stage else {'$match': {}},
         {'$lookup': {'from': 'products', 'localField': 'product_id', 'foreignField': '_id', 'as': 'product'}},
-        {'$lookup': {'from': 'locations', 'localField': 'location_id', 'foreignField': '_id', 'as': 'location'}},
         {'$unwind': '$product'},
+    ]
+    
+    # Add client filter based on user role
+    if user['role'] == 'client':
+        pipeline.append({'$match': {'product.client_id': user['client_id']}})
+    elif client_id:
+        pipeline.append({'$match': {'product.client_id': client_id}})
+    else:
+        # Admin without client_id: exclude demos via lookup
+        pipeline.extend([
+            {'$lookup': {'from': 'clients', 'localField': 'product.client_id', 'foreignField': '_id', 'as': 'client_info'}},
+            {'$match': {
+                '$or': [
+                    {'client_info.is_demo': {'$ne': True}},
+                    {'client_info.is_demo': {'$exists': False}},
+                    {'client_info': {'$size': 0}}
+                ]
+            }}
+        ])
+    
+    # Continue pipeline
+    pipeline.extend([
+        {'$lookup': {'from': 'locations', 'localField': 'location_id', 'foreignField': '_id', 'as': 'location'}},
         {'$unwind': '$location'},
         {'$lookup': {'from': 'clients', 'localField': 'product.client_id', 'foreignField': '_id', 'as': 'client'}},
         {'$addFields': {
@@ -559,9 +564,9 @@ def get_inventory(request: Request, client_id: Optional[str] = None):
             'client_name': {'$arrayElemAt': ['$client.name', 0]},
             'client_id': '$product.client_id'
         }},
-        {'$project': {'product': 0, 'location': 0, 'client': 0}},
+        {'$project': {'product': 0, 'location': 0, 'client': 0, 'client_info': 0}},
         {'$limit': 500}
-    ]
+    ])
     
     inventory = list(db.inventory.aggregate(pipeline))
     return serialize_doc(inventory)
@@ -715,6 +720,17 @@ def get_invoices(request: Request, client_id: Optional[str] = None):
         query['client_id'] = user['client_id']
     elif client_id:
         query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None
     
     pipeline = [
         {'$match': query},

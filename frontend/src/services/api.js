@@ -74,7 +74,7 @@ export const getDashboardStats = (client_id) => api.get('/dashboard/stats', { pa
 export const getInvoices = (params) => api.get('/billing/invoices', { params });
 export const getInvoice = (id) => api.get(`/billing/invoices/${id}`);
 
-// Client Portal
-export const getClientSummary = (client_id) => api.get('/client-portal/summary', { params: { client_id } });
+// Client Portal - CORRIGÉ : utilise /dashboard/stats au lieu de /client-portal/summary
+export const getClientSummary = () => api.get('/dashboard/stats');
 
 export default api;
