@@ -293,8 +293,14 @@ def login(data: LoginRequest):
     
     client_name = None
     if user.get('client_id'):
-        client = db.clients.find_one({'_id': user['client_id']})
-        client_name = client['name'] if client else None
+        # Convert client_id to ObjectId for MongoDB query
+        try:
+            from bson import ObjectId
+            client_id_obj = ObjectId(user['client_id']) if isinstance(user['client_id'], str) else user['client_id']
+            client = db.clients.find_one({'_id': client_id_obj})
+            client_name = client['name'] if client else None
+        except:
+            client_name = None
     
     token = create_token(user)
     return {
