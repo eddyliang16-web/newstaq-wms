@@ -15,9 +15,9 @@ app = FastAPI(title="WMS 3PL API")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[        
-"https://newstaq-frontend.onrender.com",  # Votre URL frontend en production
-"http://localhost:3000"                    # Pour tester en local
+    allow_origins=["*"       
+#"https://newstaq-frontend.onrender.com",  # Votre URL frontend en production
+#"http://localhost:3000"                    # Pour tester en local
 ],
     allow_credentials=True,
     allow_methods=["*"],
