@@ -15,11 +15,43 @@ const LandingPage = () => {
     phone: '',
     message: ''
   });
+  const [formStatus, setFormStatus] = useState({ type: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Merci pour votre demande ! Notre équipe vous contactera sous 24h.');
-    setFormData({ name: '', company: '', email: '', phone: '', message: '' });
+    setIsSubmitting(true);
+    setFormStatus({ type: '', message: '' });
+
+    try {
+      const response = await fetch('https://api.newstaq.com/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFormStatus({
+          type: 'success',
+          message: 'Merci pour votre demande ! Notre équipe vous contactera sous 24h.'
+        });
+        setFormData({ name: '', company: '', email: '', phone: '', message: '' });
+      } else {
+        throw new Error(data.detail || 'Erreur lors de l\'envoi');
+      }
+    } catch (error) {
+      setFormStatus({
+        type: 'error',
+        message: 'Une erreur est survenue. Veuillez réessayer ou nous contacter à contact@newstaq.com'
+      });
+      console.error('Erreur:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const features = [
@@ -414,10 +446,33 @@ const LandingPage = () => {
                 />
               </div>
 
-              <button type="submit" style={styles.submitButton}>
-                Recevoir mon Devis Gratuit sous 24h
+              <button 
+                type="submit" 
+                style={{
+                  ...styles.submitButton,
+                  opacity: isSubmitting ? 0.7 : 1,
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Envoi en cours...' : 'Recevoir mon Devis Gratuit sous 24h'}
                 <ChevronRight size={20} />
               </button>
+
+              {formStatus.message && (
+                <div style={{
+                  ...styles.formMessage,
+                  backgroundColor: formStatus.type === 'success' ? '#d1fae5' : '#fee2e2',
+                  color: formStatus.type === 'success' ? '#065f46' : '#991b1b',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  marginTop: '16px',
+                  fontSize: '14px',
+                  textAlign: 'center'
+                }}>
+                  {formStatus.message}
+                </div>
+              )}
             </form>
 
             <div style={styles.contactInfo}>
