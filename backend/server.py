@@ -408,23 +408,35 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
         ]
     
     low_stock_products = list(db.products.aggregate(low_stock_pipeline))
-    
-    # Get recent orders for client dashboard
-    recent_orders = []
+     # Invoice stats
     if client_filter:
-        recent_orders_pipeline = [
+        invoices_total = db.invoices.count_documents(client_filter)
+        paid_invoices = db.invoices.count_documents({**client_filter, 'status': 'paid'})
+        
+        # Calculate totals
+        invoice_pipeline = [
             {'$match': client_filter},
-            {'$sort': {'created_at': -1}},
-            {'$limit': 5},
-            {'$project': {
-                'id': {'$toString': '$_id'},
-                'order_number': 1,
-                'customer_name': 1,
-                'status': 1,
-                'created_at': 1
+            {'$group': {
+                '_id': None,
+                'total_billed': {'$sum': '$total'},
+                'outstanding': {'$sum': {
+                    '$cond': [
+                        {'$ne': ['$status', 'paid']},
+                        '$total',
+                        0
+                    ]
+                }}
             }}
         ]
-        recent_orders = list(db.orders.aggregate(recent_orders_pipeline))
+        invoice_stats = list(db.invoices.aggregate(invoice_pipeline))
+        total_billed = invoice_stats[0]['total_billed'] if invoice_stats else 0
+        outstanding_amount = invoice_stats[0]['outstanding'] if invoice_stats else 0
+    else:
+        # Admin: exclude demos
+        invoices_total = db.invoices.count_documents({'client_id': {'$in': non_demo_client_ids}})
+        paid_invoices = db.invoices.count_documents({'client_id': {'$in': non_demo_client_ids}, 'status': 'paid'})
+        total_billed = 0
+        outstanding_amount = 0
     
     return {
         'products': {
@@ -440,10 +452,10 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
             'planned': receipts_pending
         },
         'invoices': {
-            'total_invoices': 0,  # TODO: add invoice stats
-            'outstanding_amount': 0,
-            'total_billed': 0,
-            'paid': 0
+            'total_invoices': invoices_total,
+            'outstanding_amount': outstanding_amount,
+            'total_billed': total_billed,
+            'paid': paid_invoices
         },
         'low_stock_products': low_stock_products,
         'recent_orders': []
