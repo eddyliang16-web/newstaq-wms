@@ -584,13 +584,21 @@ def get_inventory(request: Request, client_id: Optional[str] = None):
         pipeline.append({'$match': {'product.client_id': client_id}})
     else:
         # Admin without client_id: exclude demos via lookup
-        pipeline.extend([
-            {'$lookup': {'from': 'clients', 'localField': 'product.client_id', 'foreignField': '_id', 'as': 'client_info'}},
+        # Convert client_id string to ObjectId for lookup
+         pipeline.extend([
+            {'$addFields': {
+                'product_client_id_obj': {'$toObjectId': '$product.client_id'}
+            }},
+            {'$lookup': {
+                'from': 'clients',
+                'localField': 'product_client_id_obj',
+                'foreignField': '_id',
+                'as': 'client_info'
+            }},
             {'$match': {
                 '$or': [
                     {'client_info.is_demo': {'$ne': True}},
-                    {'client_info.is_demo': {'$exists': False}},
-                    {'client_info': {'$size': 0}}
+                    {'client_info.is_demo': {'$exists': False}}
                 ]
             }}
         ])
