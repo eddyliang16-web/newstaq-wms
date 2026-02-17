@@ -409,19 +409,44 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
     
     low_stock_products = list(db.products.aggregate(low_stock_pipeline))
     
+    # Get recent orders for client dashboard
+    recent_orders = []
+    if client_filter:
+        recent_orders_pipeline = [
+            {'$match': client_filter},
+            {'$sort': {'created_at': -1}},
+            {'$limit': 5},
+            {'$project': {
+                'id': {'$toString': '$_id'},
+                'order_number': 1,
+                'customer_name': 1,
+                'status': 1,
+                'created_at': 1
+            }}
+        ]
+        recent_orders = list(db.orders.aggregate(recent_orders_pipeline))
+    
     return {
-        'stock': {
-            'total_products': products_count,
-            'total_quantity': total_stock
+        'products': {
+            'product_count': products_count,
+            'total_stock': total_stock
         },
         'orders': {
             'total_orders': orders_total,
-            'pending_orders': orders_pending
+            'pending': orders_pending
         },
         'receipts': {
-            'pending_receipts': receipts_pending
+            'total_receipts': receipts_pending,  # For consistency
+            'planned': receipts_pending
         },
-        'low_stock_products': low_stock_products
+        'invoices': {
+            'total_invoices': 0,  # TODO: add invoice stats
+            'outstanding_amount': 0,
+            'total_billed': 0,
+            'paid': 0
+        },
+        'low_stock_products': low_stock_products,
+        'recent_orders': recent_orders
     }
 
 # ==================== CLIENTS ====================
