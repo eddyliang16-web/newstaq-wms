@@ -15,9 +15,9 @@ app = FastAPI(title="WMS 3PL API")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"       
-#"https://newstaq-frontend.onrender.com",  # Votre URL frontend en production
-#"http://localhost:3000"                    # Pour tester en local
+    allow_origins=[        
+"https://newstaq-frontend.onrender.com",  # Votre URL frontend en production
+"http://localhost:3000"                    # Pour tester en local
 ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -426,7 +426,8 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
         ]
         recent_orders = list(db.orders.aggregate(recent_orders_pipeline))
     
-    return {
+    # Serialize all data to handle ObjectId and datetime
+    return serialize_doc({
         'products': {
             'product_count': products_count,
             'total_stock': total_stock
@@ -436,13 +437,18 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
             'pending': orders_pending
         },
         'receipts': {
-            'total_receipts': receipts_pending,  # For consistency
+            'total_receipts': receipts_pending,
             'planned': receipts_pending
         },
         'invoices': {
-            'total_invoices': 0,  # TODO: add invoice stats
+            'total_invoices': 0,
             'outstanding_amount': 0,
             'total_billed': 0,
+            'paid': 0
+        },
+        'low_stock_products': low_stock_products,
+        'recent_orders': recent_orders
+    })
             'paid': 0
         },
         'low_stock_products': low_stock_products,
