@@ -293,8 +293,14 @@ def login(data: LoginRequest):
     
     client_name = None
     if user.get('client_id'):
-        client = db.clients.find_one({'_id': user['client_id']})
-        client_name = client['name'] if client else None
+        # Convert client_id to ObjectId for MongoDB query
+        try:
+            from bson import ObjectId
+            client_id_obj = ObjectId(user['client_id']) if isinstance(user['client_id'], str) else user['client_id']
+            client = db.clients.find_one({'_id': client_id_obj})
+            client_name = client['name'] if client else None
+        except:
+            client_name = None
     
     token = create_token(user)
     return {
@@ -403,7 +409,23 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
     
     low_stock_products = list(db.products.aggregate(low_stock_pipeline))
     
-    # Structure compatible avec le frontend
+    # Get recent orders for client dashboard
+    recent_orders = []
+    if client_filter:
+        recent_orders_pipeline = [
+            {'$match': client_filter},
+            {'$sort': {'created_at': -1}},
+            {'$limit': 5},
+            {'$project': {
+                'id': {'$toString': '$_id'},
+                'order_number': 1,
+                'customer_name': 1,
+                'status': 1,
+                'created_at': 1
+            }}
+        ]
+        recent_orders = list(db.orders.aggregate(recent_orders_pipeline))
+    
     return {
         'products': {
             'product_count': products_count,
@@ -414,21 +436,17 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
             'pending': orders_pending
         },
         'receipts': {
-            'total_receipts': receipts_pending,
+            'total_receipts': receipts_pending,  # For consistency
             'planned': receipts_pending
         },
         'invoices': {
-            'total_invoices': 0,
+            'total_invoices': 0,  # TODO: add invoice stats
             'outstanding_amount': 0,
             'total_billed': 0,
             'paid': 0
         },
         'low_stock_products': low_stock_products,
         'recent_orders': []
-    }
-            'pending_receipts': receipts_pending
-        },
-        'low_stock_products': low_stock_products
     }
 
 # ==================== CLIENTS ====================
