@@ -89,6 +89,7 @@ const AppContent = () => {
           {/* Public Landing Page */}
           <Route path="/" element={isAuthenticated ? (isClient ? <Navigate to="/client" /> : <Navigate to="/dashboard" />) : <LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/cgv" element={<CGV />} />
           <Route path="/rgpd" element={<RGPD />} />
