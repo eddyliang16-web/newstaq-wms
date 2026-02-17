@@ -5,10 +5,13 @@ from datetime import datetime, timedelta, timezone
 from bson import ObjectId
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from pymongo import MongoClient
 import httpx
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = FastAPI(title="WMS 3PL API")
 
@@ -16,9 +19,11 @@ app = FastAPI(title="WMS 3PL API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[        
-"https://newstaq-frontend.onrender.com",  # Votre URL frontend en production
-"http://localhost:3000"                    # Pour tester en local
-],
+        "https://newstaq-frontend.onrender.com",  # Frontend Render
+        "https://app.newstaq.com",                 # Frontend custom domain
+        "https://www.newstaq.com",                 # Landing page
+        "http://localhost:3000"                    # Pour tester en local
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -285,6 +290,13 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class ContactForm(BaseModel):
+    name: str
+    company: str = ""
+    email: EmailStr
+    phone: str = ""
+    message: str
+
 @app.post('/api/auth/login')
 def login(data: LoginRequest):
     user = db.users.find_one({'username': data.username, 'active': True})
@@ -314,6 +326,72 @@ def login(data: LoginRequest):
             'client_name': client_name
         }
     }
+
+@app.post('/api/contact')
+def send_contact_email(data: ContactForm):
+    """
+    Endpoint pour gérer le formulaire de contact de la landing page
+    Envoie un email à contact@newstaq.com via Gmail SMTP
+    """
+    try:
+        # Configuration Gmail
+        SMTP_SERVER = "smtp.gmail.com"
+        SMTP_PORT = 587
+        SENDER_EMAIL = os.environ.get('GMAIL_USER', 'your-email@gmail.com')
+        SENDER_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', '')  # App password Google
+        RECIPIENT_EMAIL = 'contact@newstaq.com'
+        
+        # Créer le message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = f'[NEWSTAQ] Nouveau message de {data.name}'
+        msg['From'] = SENDER_EMAIL
+        msg['To'] = RECIPIENT_EMAIL
+        msg['Reply-To'] = data.email
+        
+        # Corps du message en HTML
+        html_body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">
+                    Nouveau message depuis le site NEWSTAQ
+                </h2>
+                
+                <div style="margin: 20px 0;">
+                    <p><strong>Nom :</strong> {data.name}</p>
+                    <p><strong>Entreprise :</strong> {data.company if data.company else "Non renseignée"}</p>
+                    <p><strong>Email :</strong> <a href="mailto:{data.email}">{data.email}</a></p>
+                    <p><strong>Téléphone :</strong> {data.phone if data.phone else "Non renseigné"}</p>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <p><strong>Message :</strong></p>
+                    <p style="white-space: pre-wrap;">{data.message}</p>
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #64748b;">
+                    <p>Ce message a été envoyé depuis le formulaire de contact de www.newstaq.com</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        # Attacher le HTML
+        part = MIMEText(html_body, 'html')
+        msg.attach(part)
+        
+        # Envoyer l'email
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SENDER_EMAIL, SENDER_PASSWORD)
+            server.send_message(msg)
+        
+        return {'success': True, 'message': 'Email envoyé avec succès'}
+        
+    except Exception as e:
+        print(f"Erreur envoi email: {str(e)}")
+        raise HTTPException(status_code=500, detail='Erreur lors de l\'envoi de l\'email')
 
 @app.get('/api/auth/me')
 def get_me(request: Request):
