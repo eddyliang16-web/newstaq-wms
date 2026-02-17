@@ -344,9 +344,19 @@ def send_contact_email(data: ContactForm):
         # Créer le message
         msg = MIMEMultipart('alternative')
         msg['Subject'] = f'[NEWSTAQ] Nouveau message de {data.name}'
-        msg['From'] = SENDER_EMAIL
+        msg['From'] = f'Contact NEWSTAQ <{SENDER_EMAIL}>'
         msg['To'] = RECIPIENT_EMAIL
         msg['Reply-To'] = data.email
+        
+        # Headers importants pour éviter l'auto-archivage Gmail
+        msg['X-Priority'] = '1'  # Haute priorité
+        msg['Importance'] = 'high'
+        msg['X-MSMail-Priority'] = 'High'
+        
+        # Message ID unique pour éviter la déduplication
+        import random
+        import time
+        msg['Message-ID'] = f'<{int(time.time())}.{random.randint(1000, 9999)}@newstaq.com>'
         
         # Corps du message en HTML
         html_body = f"""
