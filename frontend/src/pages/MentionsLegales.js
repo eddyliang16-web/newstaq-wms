@@ -86,6 +86,7 @@ const MentionsLegales = () => {
           mauvaise utilisation des fonctionnalités proposées,
           non-respect de la législation par l’utilisateur.
           L’utilisateur s’engage à ne pas utiliser le site ou son contenu à des fins illicites ou pouvant nuire à l’image de Futurlog. Il est également responsable des informations et messages qu’il transmet.
+          </p>
         </section>
 
         <div style={styles.footer}>
