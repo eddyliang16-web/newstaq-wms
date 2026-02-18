@@ -180,7 +180,6 @@ const LandingPage = () => {
           <div style={styles.heroButtons}>
             <a href="#contact" style={styles.ctaButton}>
               Demander une Démo
-              <ChevronRight size={20} />
             </a>
             <button onClick={() => navigate('/login')} style={styles.secondaryButton}>
               Accéder à l'App
