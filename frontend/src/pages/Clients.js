@@ -7,6 +7,7 @@ const Clients = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',  // Ajouté pour le backend
     company_name: '',
     email: '',
     phone: '',
@@ -99,7 +100,13 @@ const Clients = () => {
     }
     
     try {
-      const response = await api.post('/clients/create', formData);
+      // Ajouter name = company_name pour le backend
+      const dataToSend = {
+        ...formData,
+        name: formData.company_name
+      };
+      
+      const response = await api.post('/clients/create', dataToSend);
       
       setSubmitSuccess({
         message: 'Client créé avec succès !',
@@ -114,6 +121,7 @@ const Clients = () => {
         setShowCreateModal(false);
         setSubmitSuccess(null);
         setFormData({
+          name: '',
           company_name: '',
           email: '',
           phone: '',
