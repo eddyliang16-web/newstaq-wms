@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   Package, Warehouse, ShoppingCart, TrendingUp, 
   BarChart3, Clock, Shield, Zap, ChevronRight,
-  Check, Mail, Phone, MapPin, User, Building
+  Check, Mail, Phone, MapPin, User, Building, Menu, X
 } from 'lucide-react';
 
 const LandingPage = () => {
@@ -17,6 +17,23 @@ const LandingPage = () => {
   });
   const [formStatus, setFormStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (window.innerWidth > 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 768;
+  const isTablet = windowWidth > 768 && windowWidth <= 1024;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,6 +70,411 @@ const LandingPage = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Fonction pour obtenir les styles responsives
+  const getStyles = () => ({
+    container: {
+      minHeight: '100vh',
+      backgroundColor: '#ffffff',
+    },
+    header: {
+      position: 'sticky',
+      top: 0,
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(10px)',
+      borderBottom: '1px solid #e2e8f0',
+      zIndex: 1000,
+      padding: isMobile ? '0.75rem 0' : '1rem 0',
+    },
+    headerContent: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: isMobile ? '0 1rem' : '0 2rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    logo: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: isMobile ? '0.5rem' : '0.75rem',
+    },
+    logoText: {
+      fontSize: isMobile ? '1.25rem' : '1.5rem',
+      fontWeight: 'bold',
+      background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+    },
+    hamburger: {
+      background: 'none',
+      border: 'none',
+      color: '#475569',
+      cursor: 'pointer',
+      padding: '0.5rem',
+      display: isMobile ? 'block' : 'none',
+    },
+    nav: {
+      display: isMobile ? 'none' : 'flex',
+      alignItems: 'center',
+      gap: '2rem',
+    },
+    navLink: {
+      color: '#475569',
+      textDecoration: 'none',
+      fontSize: '0.95rem',
+      fontWeight: '500',
+      transition: 'color 0.2s',
+      cursor: 'pointer',
+    },
+    loginButton: {
+      padding: '0.625rem 1.5rem',
+      backgroundColor: '#3b82f6',
+      color: 'white',
+      border: 'none',
+      borderRadius: '0.5rem',
+      fontSize: '0.95rem',
+      fontWeight: '500',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+    },
+    mobileMenu: {
+      display: 'flex',
+      flexDirection: 'column',
+      background: 'white',
+      borderTop: '1px solid #e2e8f0',
+      padding: '1rem',
+      gap: '0.75rem',
+    },
+    mobileNavLink: {
+      color: '#475569',
+      textDecoration: 'none',
+      fontSize: '1rem',
+      fontWeight: '500',
+      padding: '0.75rem',
+      borderRadius: '0.5rem',
+      transition: 'background 0.2s',
+    },
+    mobileLoginButton: {
+      padding: '0.875rem 1.5rem',
+      backgroundColor: '#3b82f6',
+      color: 'white',
+      border: 'none',
+      borderRadius: '0.5rem',
+      fontSize: '1rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      marginTop: '0.5rem',
+    },
+    hero: {
+      background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+      padding: isMobile ? '3rem 1rem' : '6rem 2rem',
+    },
+    heroContent: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+      textAlign: 'center',
+    },
+    heroTitle: {
+      fontSize: isMobile ? '2rem' : (isTablet ? '3rem' : '4rem'),
+      fontWeight: 'bold',
+      color: '#0f172a',
+      marginBottom: isMobile ? '1rem' : '1.5rem',
+      lineHeight: 1.2,
+    },
+    heroSubtitle: {
+      fontSize: isMobile ? '1rem' : '1.25rem',
+      color: '#475569',
+      maxWidth: isMobile ? '100%' : '800px',
+      margin: isMobile ? '0 auto 2rem' : '0 auto 3rem',
+      lineHeight: 1.7,
+      padding: isMobile ? '0 0.5rem' : '0',
+    },
+    heroButtons: {
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      gap: '1rem',
+      justifyContent: 'center',
+      marginBottom: isMobile ? '3rem' : '4rem',
+      padding: isMobile ? '0 1rem' : '0',
+    },
+    ctaButton: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.5rem',
+      padding: isMobile ? '1rem 1.5rem' : '1rem 2rem',
+      backgroundColor: '#3b82f6',
+      color: 'white',
+      border: 'none',
+      borderRadius: '0.75rem',
+      fontSize: isMobile ? '1rem' : '1.1rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      textDecoration: 'none',
+      transition: 'all 0.3s',
+      boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
+    },
+    secondaryButton: {
+      padding: isMobile ? '1rem 1.5rem' : '1rem 2rem',
+      backgroundColor: 'white',
+      color: '#3b82f6',
+      border: '2px solid #3b82f6',
+      borderRadius: '0.75rem',
+      fontSize: isMobile ? '1rem' : '1.1rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
+    },
+    heroStats: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : (isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)'),
+      gap: isMobile ? '2rem' : '4rem',
+      padding: isMobile ? '0 1rem' : '0',
+    },
+    stat: {
+      textAlign: 'center',
+    },
+    statNumber: {
+      fontSize: isMobile ? '2rem' : '3rem',
+      fontWeight: 'bold',
+      background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+    },
+    statLabel: {
+      fontSize: isMobile ? '0.875rem' : '1rem',
+      color: '#64748b',
+      marginTop: '0.5rem',
+    },
+    section: {
+      padding: isMobile ? '3rem 1rem' : '6rem 2rem',
+    },
+    sectionContent: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+    },
+    sectionTitle: {
+      fontSize: isMobile ? '2rem' : '3rem',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: isMobile ? '1rem' : '1.5rem',
+      color: '#0f172a',
+    },
+    sectionSubtitle: {
+      fontSize: isMobile ? '1rem' : '1.25rem',
+      color: '#64748b',
+      textAlign: 'center',
+      maxWidth: isMobile ? '100%' : '600px',
+      margin: isMobile ? '0 auto 3rem' : '0 auto 4rem',
+      padding: isMobile ? '0 0.5rem' : '0',
+    },
+    featuresGrid: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : (isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'),
+      gap: isMobile ? '1.5rem' : '2rem',
+    },
+    featureCard: {
+      background: 'white',
+      padding: isMobile ? '1.5rem' : '2rem',
+      borderRadius: '1rem',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+      border: '1px solid #e2e8f0',
+      transition: 'all 0.3s',
+    },
+    featureIcon: {
+      width: isMobile ? '2.5rem' : '3rem',
+      height: isMobile ? '2.5rem' : '3rem',
+      backgroundColor: '#eff6ff',
+      borderRadius: '0.75rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '1rem',
+    },
+    featureTitle: {
+      fontSize: isMobile ? '1.125rem' : '1.25rem',
+      fontWeight: '600',
+      color: '#0f172a',
+      marginBottom: '0.75rem',
+    },
+    featureDescription: {
+      fontSize: isMobile ? '0.875rem' : '1rem',
+      color: '#64748b',
+      lineHeight: 1.6,
+    },
+    benefitsSection: {
+      backgroundColor: '#f8fafc',
+      padding: isMobile ? '3rem 1rem' : '6rem 2rem',
+    },
+    benefitsGrid: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : (isTablet ? '1fr' : 'repeat(2, 1fr)'),
+      gap: isMobile ? '1.5rem' : '2rem',
+    },
+    pricingSection: {
+      padding: isMobile ? '3rem 1rem' : '6rem 2rem',
+      backgroundColor: 'white',
+    },
+    pricingGrid: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : (isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)'),
+      gap: isMobile ? '1.5rem' : '2rem',
+    },
+    pricingCard: {
+      background: 'white',
+      border: '2px solid #e2e8f0',
+      borderRadius: '1rem',
+      padding: isMobile ? '1.5rem' : '2rem',
+      transition: 'all 0.3s',
+    },
+    contactSection: {
+      backgroundColor: '#f8fafc',
+      padding: isMobile ? '3rem 1rem' : '6rem 2rem',
+    },
+    contactContainer: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : (isTablet ? '1fr' : '2fr 1fr'),
+      gap: isMobile ? '2rem' : '4rem',
+    },
+    contactForm: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1.5rem',
+    },
+    formGroup: {
+      marginBottom: '0',
+    },
+    label: {
+      display: 'block',
+      marginBottom: '0.5rem',
+      color: '#334155',
+      fontWeight: '500',
+      fontSize: isMobile ? '0.875rem' : '1rem',
+    },
+    inputWrapper: {
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    inputIcon: {
+      position: 'absolute',
+      left: '1rem',
+      pointerEvents: 'none',
+    },
+    input: {
+      width: '100%',
+      padding: isMobile ? '0.875rem 1rem 0.875rem 3rem' : '1rem 1rem 1rem 3rem',
+      border: '2px solid #e2e8f0',
+      borderRadius: '0.5rem',
+      fontSize: isMobile ? '0.875rem' : '1rem',
+      transition: 'border-color 0.2s',
+    },
+    textarea: {
+      width: '100%',
+      padding: isMobile ? '0.875rem 1rem' : '1rem',
+      border: '2px solid #e2e8f0',
+      borderRadius: '0.5rem',
+      fontSize: isMobile ? '0.875rem' : '1rem',
+      fontFamily: 'inherit',
+      transition: 'border-color 0.2s',
+      resize: 'vertical',
+    },
+    submitButton: {
+      width: '100%',
+      padding: isMobile ? '1rem' : '1.25rem',
+      backgroundColor: '#3b82f6',
+      color: 'white',
+      border: 'none',
+      borderRadius: '0.75rem',
+      fontSize: isMobile ? '1rem' : '1.1rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.5rem',
+    },
+    formMessage: {
+      padding: isMobile ? '0.875rem' : '1rem',
+      borderRadius: '0.5rem',
+      textAlign: 'center',
+      fontSize: isMobile ? '0.875rem' : '1rem',
+      marginTop: '1rem',
+    },
+    contactInfo: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '2rem',
+    },
+    contactInfoTitle: {
+      fontSize: isMobile ? '1.5rem' : '1.75rem',
+      fontWeight: 'bold',
+      color: '#0f172a',
+      marginBottom: '1rem',
+    },
+    contactInfoItem: {
+      display: 'flex',
+      gap: '1rem',
+      alignItems: 'flex-start',
+    },
+    contactInfoLabel: {
+      fontSize: isMobile ? '0.75rem' : '0.875rem',
+      color: '#64748b',
+      textTransform: 'uppercase',
+      fontWeight: '600',
+      letterSpacing: '0.05em',
+    },
+    contactInfoValue: {
+      fontSize: isMobile ? '1rem' : '1.125rem',
+      color: '#0f172a',
+      textDecoration: 'none',
+      fontWeight: '500',
+    },
+    footer: {
+      backgroundColor: '#0f172a',
+      color: 'white',
+      padding: isMobile ? '3rem 1rem 1.5rem' : '4rem 2rem 2rem',
+    },
+    footerContent: {
+      maxWidth: '1400px',
+      margin: '0 auto 2rem',
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : (isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)'),
+      gap: isMobile ? '2rem' : '3rem',
+    },
+    footerSection: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.75rem',
+    },
+    footerTitle: {
+      fontSize: isMobile ? '1rem' : '1.125rem',
+      fontWeight: '600',
+      marginBottom: '0.5rem',
+      color: 'white',
+    },
+    footerLink: {
+      color: '#94a3b8',
+      textDecoration: 'none',
+      fontSize: isMobile ? '0.875rem' : '1rem',
+      transition: 'color 0.2s',
+    },
+    footerBottom: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+      paddingTop: '1.5rem',
+      borderTop: '1px solid #1e293b',
+      textAlign: 'center',
+    },
+    footerCopyright: {
+      color: '#64748b',
+      fontSize: isMobile ? '0.75rem' : '0.875rem',
+    },
+  });
+
+  const styles = getStyles();
 
   const features = [
     {
@@ -99,21 +521,38 @@ const LandingPage = () => {
       description: 'Opérationnel en moins de 48h, formation incluse'
     },
     {
+      icon: Check,
+      title: 'Support Réactif',
+      description: 'Équipe dédiée disponible 24/7 pour vous accompagner'
+    },
+    {
       icon: TrendingUp,
-      title: 'Évolutif',
-      description: 'S\'adapte à votre croissance, de 100 à 100 000 commandes/mois'
+      title: 'Scalabilité',
+      description: 'Grandit avec votre business, de 100 à 100 000 commandes/mois'
     }
   ];
 
   return (
     <div style={styles.container}>
-      {/* Header / Navigation */}
+      {/* Header */}
       <header style={styles.header}>
         <div style={styles.headerContent}>
           <div style={styles.logo}>
-            <Package size={32} color="#3b82f6" />
+            <Package size={isMobile ? 28 : 32} color="#3b82f6" />
             <span style={styles.logoText}>NEWSTAQ</span>
           </div>
+          
+          {/* Hamburger button for mobile */}
+          {isMobile && (
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              style={styles.hamburger}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          )}
+          
+          {/* Desktop navigation */}
           <nav style={styles.nav}>
             <a href="#features" style={styles.navLink}>Fonctionnalités</a>
             <a href="#benefits" style={styles.navLink}>Avantages</a>
@@ -124,36 +563,52 @@ const LandingPage = () => {
             </button>
           </nav>
         </div>
+        
+        {/* Mobile menu */}
+        {isMobile && isMobileMenuOpen && (
+          <nav style={styles.mobileMenu}>
+            <a href="#features" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Fonctionnalités</a>
+            <a href="#benefits" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Avantages</a>
+            <a href="#pricing" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Tarifs</a>
+            <a href="#contact" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Contact</a>
+            <button onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} style={styles.mobileLoginButton}>
+              Connexion
+            </button>
+          </nav>
+        )}
       </header>
 
       {/* Hero Section */}
       <section style={styles.hero}>
         <div style={styles.heroContent}>
           <h1 style={styles.heroTitle}>
-            La Solution WMS 3PL<br />
+            La Solution WMS 3PL{isMobile ? ' ' : <br />}
             Nouvelle Génération
           </h1>
           <p style={styles.heroSubtitle}>
-            Optimisez votre logistique avec NEWSTAQ : gestion d'entrepôt intelligente, 
-            intégrations e-commerce complètes et portail client dédié.
+            Optimisez votre logistique avec notre plateforme tout-en-un. Gestion intelligente de vos stocks, commandes et expéditions.
           </p>
           <div style={styles.heroButtons}>
-            <a href="#contact" style={styles.ctaButton}>
-              Demander une Démo
+            <button onClick={() => navigate('/login')} style={styles.ctaButton}>
+              Démarrer Gratuitement
               <ChevronRight size={20} />
-            </a>
-            <button onClick={() => navigate('/login')} style={styles.secondaryButton}>
-              Accéder à l'App
             </button>
+            <a href="#contact" style={styles.secondaryButton}>
+              Demander une Démo
+            </a>
           </div>
           <div style={styles.heroStats}>
             <div style={styles.stat}>
-              <div style={styles.statNumber}>25+</div>
-              <div style={styles.statLabel}>Intégrations</div>
-            </div>
-            <div style={styles.stat}>
               <div style={styles.statNumber}>99.9%</div>
               <div style={styles.statLabel}>Disponibilité</div>
+            </div>
+            <div style={styles.stat}>
+              <div style={styles.statNumber}>2M+</div>
+              <div style={styles.statLabel}>Commandes/mois</div>
+            </div>
+            <div style={styles.stat}>
+              <div style={styles.statNumber}>50+</div>
+              <div style={styles.statLabel}>Clients 3PL</div>
             </div>
             <div style={styles.stat}>
               <div style={styles.statNumber}>24/7</div>
@@ -168,21 +623,18 @@ const LandingPage = () => {
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle}>Fonctionnalités Complètes</h2>
           <p style={styles.sectionSubtitle}>
-            Tout ce dont vous avez besoin pour gérer efficacement votre activité 3PL
+            Tous les outils dont vous avez besoin pour gérer votre logistique efficacement
           </p>
           <div style={styles.featuresGrid}>
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div key={index} style={styles.featureCard}>
-                  <div style={styles.featureIcon}>
-                    <Icon size={28} color="#3b82f6" />
-                  </div>
-                  <h3 style={styles.featureTitle}>{feature.title}</h3>
-                  <p style={styles.featureDescription}>{feature.description}</p>
+            {features.map((feature, index) => (
+              <div key={index} style={styles.featureCard}>
+                <div style={styles.featureIcon}>
+                  <feature.icon size={isMobile ? 24 : 28} color="#3b82f6" />
                 </div>
-              );
-            })}
+                <h3 style={styles.featureTitle}>{feature.title}</h3>
+                <p style={styles.featureDescription}>{feature.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -190,45 +642,20 @@ const LandingPage = () => {
       {/* Benefits Section */}
       <section id="benefits" style={styles.benefitsSection}>
         <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Pourquoi Choisir NEWSTAQ ?</h2>
-          <div style={styles.benefitsGrid}>
-            {benefits.map((benefit, index) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={index} style={styles.benefitCard}>
-                  <Icon size={48} color="#3b82f6" />
-                  <h3 style={styles.benefitTitle}>{benefit.title}</h3>
-                  <p style={styles.benefitDescription}>{benefit.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Integrations Showcase */}
-      <section style={styles.section}>
-        <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Intégrations E-commerce</h2>
+          <h2 style={styles.sectionTitle}>Pourquoi NEWSTAQ ?</h2>
           <p style={styles.sectionSubtitle}>
-            Connectez vos boutiques en ligne et marketplaces en quelques clics
+            Une solution pensée pour votre réussite
           </p>
-          <div style={styles.integrationsGrid}>
-            <div style={styles.integrationTag}>Shopify</div>
-            <div style={styles.integrationTag}>WooCommerce</div>
-            <div style={styles.integrationTag}>PrestaShop</div>
-            <div style={styles.integrationTag}>Magento</div>
-            <div style={styles.integrationTag}>BigCommerce</div>
-            <div style={styles.integrationTag}>Amazon</div>
-            <div style={styles.integrationTag}>Zalando</div>
-            <div style={styles.integrationTag}>Cdiscount</div>
-            <div style={styles.integrationTag}>TikTok Shop</div>
-            <div style={styles.integrationTag}>Chronopost</div>
-            <div style={styles.integrationTag}>Colissimo</div>
-            <div style={styles.integrationTag}>DHL</div>
-            <div style={styles.integrationTag}>UPS</div>
-            <div style={styles.integrationTag}>FedEx</div>
-            <div style={styles.integrationTag}>Mondial Relay</div>
+          <div style={styles.benefitsGrid}>
+            {benefits.map((benefit, index) => (
+              <div key={index} style={styles.featureCard}>
+                <div style={styles.featureIcon}>
+                  <benefit.icon size={isMobile ? 24 : 28} color="#10b981" />
+                </div>
+                <h3 style={styles.featureTitle}>{benefit.title}</h3>
+                <p style={styles.featureDescription}>{benefit.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -236,138 +663,99 @@ const LandingPage = () => {
       {/* Pricing Section */}
       <section id="pricing" style={styles.pricingSection}>
         <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Tarification Transparente</h2>
+          <h2 style={styles.sectionTitle}>Tarifs Transparents</h2>
           <p style={styles.sectionSubtitle}>
-            Des prix clairs et compétitifs adaptés à votre activité
+            Des prix adaptés à votre volume d'activité
           </p>
-          
-          <div style={styles.pricingCategoriesGrid}>
-            {/* Stockage */}
-            <div style={styles.categoryCard}>
-              <div style={{...styles.categoryHeader, backgroundColor: '#3b82f6'}}>
-                <span style={styles.categoryIcon}>📦</span>
-                <h3 style={styles.categoryTitle}>Stockage</h3>
+          <div style={styles.pricingGrid}>
+            <div style={styles.pricingCard}>
+              <h3 style={{ ...styles.featureTitle, marginBottom: '1rem' }}>Starter</h3>
+              <div style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1rem' }}>
+                149€
+                <span style={{ fontSize: isMobile ? '1rem' : '1.25rem', fontWeight: 'normal', color: '#64748b' }}>/mois</span>
               </div>
-              <div style={styles.categoryBody}>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Palette EU standard 80cm x 120cm x 150cm</span>
-                  <span style={styles.priceValue}>10€ / mois</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Stockage volumétrique au m³</span>
-                  <span style={styles.priceValue}>7€ / m³ / mois</span>
-                </div>
-              </div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '1.5rem' }}>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Jusqu'à 500 références</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>500 commandes/mois</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Support email</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Entrée de Marchandises */}
-            <div style={styles.categoryCard}>
-              <div style={{...styles.categoryHeader, backgroundColor: '#10b981'}}>
-                <span style={styles.categoryIcon}>📥</span>
-                <h3 style={styles.categoryTitle}>Entrée de Marchandises</h3>
+            <div style={styles.pricingCard}>
+              <h3 style={{ ...styles.featureTitle, marginBottom: '1rem' }}>Business</h3>
+              <div style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1rem' }}>
+                349€
+                <span style={{ fontSize: isMobile ? '1rem' : '1.25rem', fontWeight: 'normal', color: '#64748b' }}>/mois</span>
               </div>
-              <div style={styles.categoryBody}>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Réception d'une palette</span>
-                  <span style={styles.priceValue}>3€ / palette</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Réception d'un colis</span>
-                  <span style={styles.priceValue}>1€ / colis</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Entrée et saisie des stocks sur WMS</span>
-                  <span style={styles.priceValue}>2,50€ / SKU</span>
-                </div>
-              </div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '1.5rem' }}>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Jusqu'à 2000 références</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>2000 commandes/mois</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Support prioritaire</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Sortie de Marchandises */}
-            <div style={styles.categoryCard}>
-              <div style={{...styles.categoryHeader, backgroundColor: '#f59e0b'}}>
-                <span style={styles.categoryIcon}>📤</span>
-                <h3 style={styles.categoryTitle}>Sortie de Marchandises</h3>
+            <div style={styles.pricingCard}>
+              <h3 style={{ ...styles.featureTitle, marginBottom: '1rem' }}>Pro</h3>
+              <div style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1rem' }}>
+                649€
+                <span style={{ fontSize: isMobile ? '1rem' : '1.25rem', fontWeight: 'normal', color: '#64748b' }}>/mois</span>
               </div>
-              <div style={styles.categoryBody}>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Pick & pack d'un article</span>
-                  <span style={styles.priceValue}>2,80€ / commande</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Pour tout article supplémentaire</span>
-                  <span style={styles.priceValue}>+0,20€ / article</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Packing sur mesure selon instructions</span>
-                  <span style={styles.priceValue}>Sur devis</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Fourniture carton packaging</span>
-                  <span style={styles.priceValue}>Sur devis</span>
-                </div>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Expédition</span>
-                  <span style={styles.priceValue}>Selon transporteur</span>
-                </div>
-              </div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '1.5rem' }}>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Références illimitées</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>5000 commandes/mois</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Support dédié 24/7</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Gestion des Retours */}
-            <div style={styles.categoryCard}>
-              <div style={{...styles.categoryHeader, backgroundColor: '#8b5cf6'}}>
-                <span style={styles.categoryIcon}>🔄</span>
-                <h3 style={styles.categoryTitle}>Gestion des Retours</h3>
+            <div style={styles.pricingCard}>
+              <h3 style={{ ...styles.featureTitle, marginBottom: '1rem' }}>Enterprise</h3>
+              <div style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1rem' }}>
+                Sur mesure
               </div>
-              <div style={styles.categoryBody}>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Réception et traitement des retours</span>
-                  <span style={styles.priceValue}>2,20€ / retour</span>
-                </div>
-              </div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '1.5rem' }}>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Solution personnalisée</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Volume illimité</span>
+                </li>
+                <li style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <Check size={20} color="#10b981" style={{ marginTop: '0.25rem', flexShrink: 0 }} />
+                  <span style={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>Account manager dédié</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Assurance */}
-            <div style={styles.categoryCard}>
-              <div style={{...styles.categoryHeader, backgroundColor: '#ef4444'}}>
-                <span style={styles.categoryIcon}>🛡️</span>
-                <h3 style={styles.categoryTitle}>Assurance</h3>
-              </div>
-              <div style={styles.categoryBody}>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Basé sur la valeur d'achat des marchandises</span>
-                  <span style={styles.priceValue}>Sur devis</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Mise en Place */}
-            <div style={styles.categoryCard}>
-              <div style={{...styles.categoryHeader, backgroundColor: '#06b6d4'}}>
-                <span style={styles.categoryIcon}>🚀</span>
-                <h3 style={styles.categoryTitle}>Mise en Place</h3>
-              </div>
-              <div style={styles.categoryBody}>
-                <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Frais administratif de mise en place</span>
-                  <span style={styles.priceValue}>49€</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div style={styles.pricingCTA}>
-            <p style={styles.ctaText}>
-              Besoin d'un devis personnalisé adapté à vos besoins spécifiques ?
-            </p>
-            <a href="#contact" style={styles.ctaButton}>
-              Demander un Devis Gratuit
-            </a>
           </div>
         </div>
       </section>
 
-      {/* Contact Form */}
+      {/* Contact Section */}
       <section id="contact" style={styles.contactSection}>
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle}>Recevez Votre Devis Gratuit</h2>
@@ -442,7 +830,7 @@ const LandingPage = () => {
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                   style={styles.textarea}
                   placeholder="Parlez-nous de votre projet..."
-                  rows="4"
+                  rows={isMobile ? "3" : "4"}
                 />
               </div>
 
@@ -456,7 +844,7 @@ const LandingPage = () => {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Envoi en cours...' : 'Recevoir mon Devis Gratuit sous 24h'}
-                <ChevronRight size={20} />
+                {!isSubmitting && <ChevronRight size={20} />}
               </button>
 
               {formStatus.message && (
@@ -464,11 +852,6 @@ const LandingPage = () => {
                   ...styles.formMessage,
                   backgroundColor: formStatus.type === 'success' ? '#d1fae5' : '#fee2e2',
                   color: formStatus.type === 'success' ? '#065f46' : '#991b1b',
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  marginTop: '16px',
-                  fontSize: '14px',
-                  textAlign: 'center'
                 }}>
                   {formStatus.message}
                 </div>
@@ -479,7 +862,7 @@ const LandingPage = () => {
               <h3 style={styles.contactInfoTitle}>Nous Contacter</h3>
               
               <div style={styles.contactInfoItem}>
-                <Mail size={24} color="#3b82f6" />
+                <Mail size={isMobile ? 20 : 24} color="#3b82f6" style={{ flexShrink: 0 }} />
                 <div>
                   <div style={styles.contactInfoLabel}>Email</div>
                   <a href="mailto:contact@newstaq.com" style={styles.contactInfoValue}>
@@ -489,7 +872,7 @@ const LandingPage = () => {
               </div>
 
               <div style={styles.contactInfoItem}>
-                <MapPin size={24} color="#3b82f6" />
+                <MapPin size={isMobile ? 20 : 24} color="#3b82f6" style={{ flexShrink: 0 }} />
                 <div>
                   <div style={styles.contactInfoLabel}>Adresse</div>
                   <div style={styles.contactInfoValue}>
@@ -501,7 +884,7 @@ const LandingPage = () => {
               </div>
 
               <div style={styles.contactInfoItem}>
-                <Clock size={24} color="#3b82f6" />
+                <Clock size={isMobile ? 20 : 24} color="#3b82f6" style={{ flexShrink: 0 }} />
                 <div>
                   <div style={styles.contactInfoLabel}>Horaires</div>
                   <div style={styles.contactInfoValue}>
@@ -519,12 +902,9 @@ const LandingPage = () => {
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
           <div style={styles.footerSection}>
-            <div style={styles.footerLogo}>
-              <Package size={28} color="#3b82f6" />
-              <span style={styles.footerLogoText}>NEWSTAQ</span>
-            </div>
-            <p style={styles.footerDescription}>
-              Solution WMS 3PL nouvelle génération pour optimiser votre logistique.
+            <h4 style={styles.footerTitle}>NEWSTAQ</h4>
+            <p style={{ ...styles.footerLink, cursor: 'default' }}>
+              Votre partenaire logistique pour une gestion d'entrepôt optimale
             </p>
           </div>
 
@@ -557,473 +937,6 @@ const LandingPage = () => {
       </footer>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#ffffff',
-  },
-  header: {
-    position: 'sticky',
-    top: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(10px)',
-    borderBottom: '1px solid #e2e8f0',
-    zIndex: 1000,
-    padding: '1rem 0',
-  },
-  headerContent: {
-    maxWidth: '1400px',
-    margin: '0 auto',
-    padding: '0 2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  logoText: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  },
-  nav: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '2rem',
-  },
-  navLink: {
-    color: '#475569',
-    textDecoration: 'none',
-    fontSize: '0.95rem',
-    fontWeight: '500',
-    transition: 'color 0.2s',
-    cursor: 'pointer',
-  },
-  loginButton: {
-    padding: '0.625rem 1.5rem',
-    backgroundColor: '#3b82f6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.5rem',
-    fontSize: '0.95rem',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  hero: {
-    background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
-    padding: '6rem 2rem',
-  },
-  heroContent: {
-    maxWidth: '1400px',
-    margin: '0 auto',
-    textAlign: 'center',
-  },
-  heroTitle: {
-    fontSize: '4rem',
-    fontWeight: 'bold',
-    color: '#0f172a',
-    marginBottom: '1.5rem',
-    lineHeight: 1.2,
-  },
-  heroSubtitle: {
-    fontSize: '1.25rem',
-    color: '#475569',
-    maxWidth: '800px',
-    margin: '0 auto 3rem',
-    lineHeight: 1.7,
-  },
-  heroButtons: {
-    display: 'flex',
-    gap: '1rem',
-    justifyContent: 'center',
-    marginBottom: '4rem',
-  },
-  ctaButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '1rem 2rem',
-    backgroundColor: '#3b82f6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.75rem',
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    transition: 'all 0.3s',
-    boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
-  },
-  secondaryButton: {
-    padding: '1rem 2rem',
-    backgroundColor: 'white',
-    color: '#3b82f6',
-    border: '2px solid #3b82f6',
-    borderRadius: '0.75rem',
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'all 0.3s',
-  },
-  heroStats: {
-    display: 'flex',
-    gap: '4rem',
-    justifyContent: 'center',
-  },
-  stat: {
-    textAlign: 'center',
-  },
-  statNumber: {
-    fontSize: '3rem',
-    fontWeight: 'bold',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  },
-  statLabel: {
-    fontSize: '1rem',
-    color: '#64748b',
-    marginTop: '0.5rem',
-  },
-  section: {
-    padding: '6rem 2rem',
-  },
-  sectionContent: {
-    maxWidth: '1400px',
-    margin: '0 auto',
-  },
-  sectionTitle: {
-    fontSize: '3rem',
-    fontWeight: 'bold',
-    color: '#0f172a',
-    textAlign: 'center',
-    marginBottom: '1rem',
-  },
-  sectionSubtitle: {
-    fontSize: '1.25rem',
-    color: '#64748b',
-    textAlign: 'center',
-    marginBottom: '4rem',
-    maxWidth: '700px',
-    margin: '0 auto 4rem',
-  },
-  featuresGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-    gap: '2rem',
-  },
-  featureCard: {
-    padding: '2rem',
-    backgroundColor: 'white',
-    borderRadius: '1rem',
-    border: '1px solid #e2e8f0',
-    transition: 'all 0.3s',
-    cursor: 'pointer',
-  },
-  featureIcon: {
-    width: '64px',
-    height: '64px',
-    backgroundColor: '#dbeafe',
-    borderRadius: '1rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '1.5rem',
-  },
-  featureTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: '0.75rem',
-  },
-  featureDescription: {
-    fontSize: '1rem',
-    color: '#64748b',
-    lineHeight: 1.6,
-  },
-  benefitsSection: {
-    padding: '6rem 2rem',
-    backgroundColor: '#f8fafc',
-  },
-  benefitsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '3rem',
-  },
-  benefitCard: {
-    textAlign: 'center',
-  },
-  benefitTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    margin: '1.5rem 0 1rem',
-  },
-  benefitDescription: {
-    fontSize: '1rem',
-    color: '#64748b',
-    lineHeight: 1.6,
-  },
-  integrationsGrid: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '1rem',
-    justifyContent: 'center',
-  },
-  integrationTag: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: 'white',
-    border: '2px solid #e2e8f0',
-    borderRadius: '9999px',
-    fontSize: '0.95rem',
-    fontWeight: '500',
-    color: '#475569',
-    transition: 'all 0.2s',
-    cursor: 'pointer',
-  },
-  pricingSection: {
-    padding: '6rem 2rem',
-    backgroundColor: '#f8fafc',
-  },
-  pricingCategoriesGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-    gap: '2rem',
-    maxWidth: '1400px',
-    margin: '0 auto 4rem',
-  },
-  categoryCard: {
-    backgroundColor: 'white',
-    borderRadius: '1rem',
-    overflow: 'hidden',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.3s, box-shadow 0.3s',
-  },
-  categoryHeader: {
-    padding: '1.5rem',
-    color: 'white',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  categoryIcon: {
-    fontSize: '2rem',
-  },
-  categoryTitle: {
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    margin: 0,
-  },
-  categoryBody: {
-    padding: '1.5rem',
-  },
-  priceItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    padding: '1rem 0',
-    borderBottom: '1px solid #e2e8f0',
-  },
-  priceService: {
-    fontSize: '0.95rem',
-    color: '#334155',
-    flex: 1,
-    paddingRight: '1rem',
-  },
-  priceValue: {
-    fontSize: '1rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    whiteSpace: 'nowrap',
-  },
-  pricingCTA: {
-    textAlign: 'center',
-    padding: '3rem 2rem',
-    backgroundColor: 'white',
-    borderRadius: '1rem',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    maxWidth: '800px',
-    margin: '0 auto',
-  },
-  ctaText: {
-    fontSize: '1.25rem',
-    color: '#475569',
-    marginBottom: '1.5rem',
-  },
-  ctaButton: {
-    display: 'inline-block',
-    padding: '1rem 2.5rem',
-    fontSize: '1.125rem',
-    fontWeight: '600',
-    color: 'white',
-    backgroundColor: '#3b82f6',
-    border: 'none',
-    borderRadius: '0.5rem',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
-  },
-  contactSection: {
-    padding: '6rem 2rem',
-  },
-  contactContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-    gap: '4rem',
-    maxWidth: '1200px',
-    margin: '0 auto',
-  },
-  contactForm: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  label: {
-    fontSize: '0.95rem',
-    fontWeight: '500',
-    color: '#334155',
-  },
-  inputWrapper: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    position: 'absolute',
-    left: '1rem',
-  },
-  input: {
-    width: '100%',
-    padding: '0.875rem 1rem 0.875rem 3rem',
-    border: '2px solid #e2e8f0',
-    borderRadius: '0.75rem',
-    fontSize: '1rem',
-    outline: 'none',
-    transition: 'all 0.2s',
-  },
-  textarea: {
-    width: '100%',
-    padding: '0.875rem 1rem',
-    border: '2px solid #e2e8f0',
-    borderRadius: '0.75rem',
-    fontSize: '1rem',
-    outline: 'none',
-    resize: 'vertical',
-    fontFamily: 'inherit',
-  },
-  submitButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    padding: '1rem 2rem',
-    backgroundColor: '#3b82f6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.75rem',
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'all 0.3s',
-    marginTop: '1rem',
-  },
-  contactInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2rem',
-  },
-  contactInfoTitle: {
-    fontSize: '1.75rem',
-    fontWeight: 'bold',
-    color: '#0f172a',
-    marginBottom: '1rem',
-  },
-  contactInfoItem: {
-    display: 'flex',
-    gap: '1.5rem',
-    alignItems: 'flex-start',
-  },
-  contactInfoLabel: {
-    fontSize: '0.875rem',
-    color: '#64748b',
-    marginBottom: '0.25rem',
-  },
-  contactInfoValue: {
-    fontSize: '1.1rem',
-    color: '#0f172a',
-    fontWeight: '500',
-    textDecoration: 'none',
-  },
-  footer: {
-    backgroundColor: '#0f172a',
-    color: 'white',
-    padding: '4rem 2rem 2rem',
-  },
-  footerContent: {
-    maxWidth: '1400px',
-    margin: '0 auto',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '3rem',
-    marginBottom: '3rem',
-  },
-  footerSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  footerLogo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    marginBottom: '0.5rem',
-  },
-  footerLogoText: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  footerDescription: {
-    color: '#94a3b8',
-    fontSize: '0.95rem',
-    lineHeight: 1.6,
-  },
-  footerTitle: {
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    marginBottom: '0.5rem',
-  },
-  footerLink: {
-    color: '#94a3b8',
-    textDecoration: 'none',
-    fontSize: '0.95rem',
-    transition: 'color 0.2s',
-    cursor: 'pointer',
-  },
-  footerBottom: {
-    maxWidth: '1400px',
-    margin: '0 auto',
-    paddingTop: '2rem',
-    borderTop: '1px solid #1e293b',
-    textAlign: 'center',
-  },
-  footerCopyright: {
-    color: '#64748b',
-    fontSize: '0.95rem',
-  },
 };
 
 export default LandingPage;

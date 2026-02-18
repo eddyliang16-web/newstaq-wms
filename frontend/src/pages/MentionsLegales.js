@@ -20,18 +20,28 @@ const MentionsLegales = () => {
         <section style={styles.section}>
           <h2 style={styles.subtitle}>Éditeur du site</h2>
           <p>NEWSTAQ</p>
+          <p>EV2L TRADE SAS</p>
           <p>1 rue d'Ableval</p>
           <p>95200 Sarcelles, France</p>
+          <p>911 730 364 RCS Paris</p>
           <p>Email : contact@newstaq.com</p>
         </section>
 
         <section style={styles.section}>
-          <h2 style={styles.subtitle}>Hébergement</h2>
-          <p>Le site est hébergé par :</p>
-          <p>Render</p>
-          <p>525 Brannan St, Suite 300</p>
-          <p>San Francisco, CA 94107, États-Unis</p>
+          <h2 style={styles.subtitle}>Acceptation des conditions d'utilisation du site</h2>
+          <p>
+          En accédant au site de Newstaq, l’utilisateur est réputé avoir accepté sans réserve les présentes conditions générales d’utilisation.
+          </p>
         </section>
+
+        <section style={styles.section}>
+          <h2 style={styles.subtitle}>Contenu du site</h2>
+          <p>
+          Toutes les informations présentes sur le site www.newstaq.com sont fournies à titre indicatif. Elles ne constituent en aucun cas une offre contractuelle.
+          Newstaq se réserve le droit de modifier le contenu du site à tout moment, sans préavis, et ne pourra être tenu responsable des conséquences de ces modifications.
+          </p>
+        </section>
+
 
         <section style={styles.section}>
           <h2 style={styles.subtitle}>Propriété intellectuelle</h2>
@@ -42,11 +52,40 @@ const MentionsLegales = () => {
         </section>
 
         <section style={styles.section}>
-          <h2 style={styles.subtitle}>Données personnelles</h2>
+          <h2 style={styles.subtitle}>Propriété intellectuelle</h2>
           <p>
-            Pour en savoir plus sur la gestion de vos données personnelles et vos droits,
-            consultez notre <Link to="/rgpd" style={styles.link}>politique de confidentialité</Link>.
+            L'ensemble du contenu de ce site (textes, images, vidéos, logos) est la propriété exclusive de NEWSTAQ.
+            Toute reproduction, même partielle, est interdite sans autorisation préalable.
           </p>
+        </section>
+
+
+        <section style={styles.section}>
+          <h2 style={styles.subtitle}>Cookies</h2>
+          <p>
+          Lors de la navigation sur le site, des cookies peuvent être déposés temporairement sur le disque dur de l’utilisateur afin de faciliter la navigation.
+          La plupart des navigateurs acceptent les cookies automatiquement. Leur désactivation peut limiter l’accès à certaines fonctionnalités du site.
+          L’utilisateur est informé de cette pratique et l’accepte. Il peut toutefois configurer son navigateur pour refuser les cookies.
+          </p>
+        </section>
+
+        <section style={styles.section}>
+          <h2 style={styles.subtitle}>Informations nominatives</h2>
+          <p>
+          Newstaq ne collecte pas de données personnelles via son site.
+          Les informations transmises via le formulaire de contact sont uniquement envoyées par email à Newstaq, sans enregistrement sur un serveur, dans le but de répondre aux demandes des internautes.
+          </p>
+        </section>
+
+        <section style={styles.section}>
+          <h2 style={styles.subtitle}>Responsabilités</h2>
+          <p>
+          L’utilisateur est seul responsable de la protection de ses données et de son matériel contre tout virus présent sur Internet.
+          Futurlog décline toute responsabilité en cas de :
+          dommage subi lors de l’utilisation du site,
+          mauvaise utilisation des fonctionnalités proposées,
+          non-respect de la législation par l’utilisateur.
+          L’utilisateur s’engage à ne pas utiliser le site ou son contenu à des fins illicites ou pouvant nuire à l’image de Futurlog. Il est également responsable des informations et messages qu’il transmet.
         </section>
 
         <div style={styles.footer}>
