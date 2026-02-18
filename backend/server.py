@@ -558,7 +558,7 @@ def get_clients(request: Request):
     clients = list(db.clients.find({'active': True}))
     return serialize_doc(clients)
 
-class ClientCreate(BaseModel):
+class ClientCreateSimple(BaseModel):
     code: str
     name: str
     email: Optional[str] = None
@@ -566,7 +566,7 @@ class ClientCreate(BaseModel):
     address: Optional[str] = None
 
 @app.post('/api/clients')
-def create_client(data: ClientCreate, request: Request):
+def create_client(data: ClientCreateSimple, request: Request):
     user = get_current_user(request)
     if user['role'] != 'admin':
         raise HTTPException(status_code=403, detail='Accès non autorisé')
@@ -1267,7 +1267,7 @@ from typing import Optional
 class ClientCreate(BaseModel):
     name: str
     company_name: str
-    email: EmailStr
+    email: str  # Changé de EmailStr à str
     phone: Optional[str] = None
     address: str
     city: str
@@ -1276,7 +1276,7 @@ class ClientCreate(BaseModel):
     siren: str  # Numéro SIREN
     contact_first_name: str
     contact_last_name: str
-    contact_email: EmailStr
+    contact_email: str  # Changé de EmailStr à str
     contact_phone: str
 
 @app.post("/api/clients/create")
