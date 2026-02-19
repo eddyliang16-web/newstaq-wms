@@ -44,6 +44,7 @@ DB_NAME = os.environ.get('DB_NAME', 'wms_database')
 # MongoDB connection
 client = MongoClient(MONGO_URL)
 db = client[DB_NAME]
+reset_tokens = db['password_reset_tokens']
 
 # Helper to convert ObjectId to string
 def serialize_doc(doc):
@@ -108,7 +109,6 @@ def init_db():
     db.receipts.create_index('receipt_number', unique=True)
     db.invoices.create_index('invoice_number', unique=True)
     db.carriers.create_index('code', unique=True)
-    reset_tokens = db['password_reset_tokens']
     
     # Seed carriers
     carriers = [
