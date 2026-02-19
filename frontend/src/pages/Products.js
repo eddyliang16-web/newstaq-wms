@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Edit2, Search, Weight } from 'lucide-react';
+import { Package, Plus, Edit2, Search, Weight, Trash2 } from 'lucide-react';
 import api from '../services/api';
 
 const Products = () => {
@@ -9,8 +9,13 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [selectedClientFilter, setSelectedClientFilter] = useState('all');
   const [formData, setFormData] = useState({
+    client_id: '',
     sku: '',
     name: '',
     description: '',
@@ -20,12 +25,22 @@ const Products = () => {
   });
 
   useEffect(() => {
+    fetchClients();
     fetchProducts();
   }, []);
 
   useEffect(() => {
     filterProducts();
-  }, [searchTerm, products]);
+  }, [searchTerm, products, selectedClientFilter]);
+
+  const fetchClients = async () => {
+    try {
+      const response = await api.get('/clients');
+      setClients(response.data);
+    } catch (error) {
+      console.error('Erreur chargement clients:', error);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -40,22 +55,29 @@ const Products = () => {
   };
 
   const filterProducts = () => {
-    if (!searchTerm.trim()) {
-      setFilteredProducts(products);
-      return;
+    let filtered = products;
+
+    // Filtre par client
+    if (selectedClientFilter !== 'all') {
+      filtered = filtered.filter(p => p.client_id === selectedClientFilter);
     }
 
-    const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    // Filtre par recherche
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
     setFilteredProducts(filtered);
   };
 
   const handleEdit = (product) => {
     setEditingProduct(product);
     setFormData({
+      client_id: product.client_id || '',
       sku: product.sku || '',
       name: product.name || '',
       description: product.description || '',
@@ -69,14 +91,37 @@ const Products = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     
+    if (!formData.client_id) {
+      alert('Veuillez sélectionner un client');
+      return;
+    }
+    
     try {
-      await api.post('/products', formData);
+      await api.post('/products', {
+        client_id: formData.client_id,
+        sku: formData.sku,
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        unit_weight: formData.weight,
+        min_stock_level: formData.min_stock_level,
+        barcode: ''
+      });
       alert('Produit créé avec succès !');
       setShowCreateModal(false);
+      setFormData({
+        client_id: '',
+        sku: '',
+        name: '',
+        description: '',
+        category: '',
+        weight: 0,
+        min_stock_level: 0
+      });
       fetchProducts();
     } catch (error) {
       console.error('Erreur création produit:', error);
-      alert('Erreur lors de la création : ' + (error.response?.data?.detail || error.message));
+      alert('Erreur : ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -91,6 +136,21 @@ const Products = () => {
     } catch (error) {
       console.error('Erreur mise à jour produit:', error);
       alert('Erreur lors de la mise à jour');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!productToDelete) return;
+    
+    try {
+      await api.delete(`/products/${productToDelete.id}`);
+      alert('Produit supprimé avec succès !');
+      setShowDeleteConfirm(false);
+      setProductToDelete(null);
+      fetchProducts();
+    } catch (error) {
+      console.error('Erreur suppression:', error);
+      alert('Erreur : ' + (error.response?.data?.detail || 'Impossible de supprimer le produit'));
     }
   };
 
@@ -150,12 +210,51 @@ const Products = () => {
         />
       </div>
 
+      {/* Filtre par client */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1rem',
+        marginBottom: '1.5rem',
+        padding: '1rem',
+        backgroundColor: '#f8fafc',
+        borderRadius: '0.5rem',
+      }}>
+        <label style={{
+          fontSize: '0.875rem',
+          fontWeight: '500',
+          color: '#334155',
+        }}>
+          Filtrer par client :
+        </label>
+        <select
+          value={selectedClientFilter}
+          onChange={(e) => setSelectedClientFilter(e.target.value)}
+          style={{
+            padding: '0.5rem 1rem',
+            border: '1px solid #e2e8f0',
+            borderRadius: '0.5rem',
+            fontSize: '0.875rem',
+            minWidth: '200px',
+            outline: 'none',
+          }}
+        >
+          <option value="all">Tous les clients</option>
+          {clients.map(client => (
+            <option key={client.id} value={client.id}>
+              {client.company_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Tableau des produits */}
       <div style={styles.tableContainer}>
         <table style={styles.table}>
           <thead>
             <tr style={styles.thead}>
               <th style={styles.th}>SKU</th>
+              <th style={styles.th}>Client</th>
               <th style={styles.th}>Nom du Produit</th>
               <th style={styles.th}>Catégorie</th>
               <th style={styles.th}>Poids (g)</th>
@@ -175,6 +274,19 @@ const Products = () => {
                 >
                   <td style={styles.td}>
                     <span style={styles.sku}>{product.sku}</span>
+                  </td>
+                  <td style={styles.td}>
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '0.25rem 0.75rem',
+                      backgroundColor: '#e0e7ff',
+                      color: '#3730a3',
+                      borderRadius: '1rem',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                    }}>
+                      {clients.find(c => c.id === product.client_id)?.company_name || 'N/A'}
+                    </span>
                   </td>
                   <td style={styles.td}>
                     <div style={styles.productName}>{product.name}</div>
@@ -216,6 +328,30 @@ const Products = () => {
                     >
                       <Edit2 size={16} />
                     </button>
+                    <button 
+                    onClick={() => {
+                      setProductToDelete(product);
+                      setShowDeleteConfirm(true);
+                    }}
+                    style={{
+                      padding: '0.5rem',
+                      backgroundColor: 'transparent',
+                      color: '#ef4444',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginLeft: '0.5rem',
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#fee2e2'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                    title="Supprimer"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                   </td>
                 </tr>
               );
@@ -356,6 +492,22 @@ const Products = () => {
 
             <form onSubmit={handleCreate} style={styles.form}>
               <div style={styles.formGroup}>
+              <div style={styles.formGroup}>
+              <label style={styles.label}>Client *</label>
+              <select
+                value={formData.client_id}
+                onChange={(e) => setFormData({...formData, client_id: e.target.value})}
+                style={styles.input}
+                required
+              >
+                <option value="">-- Sélectionnez un client --</option>
+                {clients.map(client => (
+                  <option key={client.id} value={client.id}>
+                    {client.company_name} ({client.code})
+                  </option>
+                ))}
+              </select>
+            </div>
                 <label style={styles.label}>SKU *</label>
                 <input
                   type="text"
@@ -454,6 +606,81 @@ const Products = () => {
           </div>
         </div>
       )}
+      {/* Modal de confirmation de suppression */}
+{showDeleteConfirm && productToDelete && (
+  <div style={styles.modal} onClick={() => setShowDeleteConfirm(false)}>
+    <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <div style={styles.modalHeader}>
+        <h2 style={styles.modalTitle}>⚠️ Confirmer la suppression</h2>
+        <button 
+          onClick={() => setShowDeleteConfirm(false)}
+          style={styles.closeButton}
+        >
+          ×
+        </button>
+      </div>
+
+      <div style={{padding: '1.5rem'}}>
+        <p style={{marginBottom: '1rem', color: '#475569'}}>
+          Êtes-vous sûr de vouloir supprimer ce produit ?
+        </p>
+        
+        <div style={{
+          backgroundColor: '#f1f5f9',
+          padding: '1rem',
+          borderRadius: '0.5rem',
+          marginBottom: '1rem',
+        }}>
+          <p><strong>SKU :</strong> {productToDelete.sku}</p>
+          <p><strong>Nom :</strong> {productToDelete.name}</p>
+          <p><strong>Stock actuel :</strong> {productToDelete.total_stock || 0}</p>
+        </div>
+
+        {productToDelete.total_stock > 0 && (
+          <div style={{
+            backgroundColor: '#fef3c7',
+            border: '1px solid #fbbf24',
+            padding: '1rem',
+            borderRadius: '0.5rem',
+            color: '#92400e',
+          }}>
+            <p>⚠️ <strong>Attention :</strong> Ce produit a du stock en entrepôt. La suppression sera impossible.</p>
+          </div>
+        )}
+
+        <p style={{marginTop: '1rem', fontSize: '0.875rem', color: '#64748b'}}>
+          Cette action est <strong>irréversible</strong>.
+        </p>
+      </div>
+
+      <div style={styles.modalFooter}>
+        <button 
+          onClick={() => setShowDeleteConfirm(false)}
+          style={styles.cancelButton}
+        >
+          Annuler
+        </button>
+        <button 
+          onClick={handleDelete}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#ef4444'}
+        >
+          Supprimer définitivement
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };
