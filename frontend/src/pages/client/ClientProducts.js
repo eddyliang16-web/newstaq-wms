@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Edit2, Search, Weight } from 'lucide-react';
+import { Package, Edit2, Search, Weight, Trash2, Plus } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
 const ClientProducts = () => {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [productToDelete, setProductToDelete] = useState(null);
   const [formData, setFormData] = useState({
     sku: '',
     name: '',
@@ -79,6 +84,57 @@ const ClientProducts = () => {
     }
   };
 
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    
+    if (!user?.client_id) {
+      alert('Erreur : Impossible de déterminer votre identifiant client');
+      return;
+    }
+    
+    try {
+      await api.post('/products', {
+        client_id: user.client_id,
+        sku: formData.sku,
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        unit_weight: formData.weight,
+        min_stock_level: formData.min_stock_level,
+        barcode: ''
+      });
+      alert('Produit créé avec succès !');
+      setShowCreateModal(false);
+      setFormData({
+        sku: '',
+        name: '',
+        description: '',
+        category: '',
+        weight: 0,
+        min_stock_level: 0
+      });
+      fetchProducts();
+    } catch (error) {
+      console.error('Erreur création produit:', error);
+      alert('Erreur : ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!productToDelete) return;
+    
+    try {
+      await api.delete(`/products/${productToDelete.id}`);
+      alert('Produit supprimé avec succès !');
+      setShowDeleteConfirm(false);
+      setProductToDelete(null);
+      fetchProducts();
+    } catch (error) {
+      console.error('Erreur suppression:', error);
+      alert('Erreur : ' + (error.response?.data?.detail || 'Impossible de supprimer le produit'));
+    }
+  };
+
   const getStockStatus = (product) => {
     const stock = product.total_stock || 0;
     const minLevel = product.min_stock_level || 0;
@@ -103,6 +159,29 @@ const ClientProducts = () => {
         <div>
           <h1 style={styles.title}>Mes Produits</h1>
           <p style={styles.subtitle}>{filteredProducts.length} produit(s)</p>
+        </div>
+        <div style={styles.header}>
+          <div>
+            <h1 style={styles.title}>Mes Produits</h1>
+            <p style={styles.subtitle}>{filteredProducts.length} produit(s)</p>
+          </div>
+          <button 
+            style={styles.addButton}
+            onClick={() => {
+              setFormData({
+                sku: '',
+                name: '',
+                description: '',
+                category: '',
+                weight: 0,
+                min_stock_level: 0
+              });
+              setShowCreateModal(true);
+            }}
+          >
+            <Plus size={20} />
+            Ajouter un Produit
+          </button>
         </div>
       </div>
 
@@ -184,6 +263,25 @@ const ClientProducts = () => {
                     >
                       <Edit2 size={16} />
                     </button>
+                    <td style={styles.td}>
+                      <button 
+                        onClick={() => handleEdit(product)}
+                        style={styles.editButton}
+                        title="Modifier"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setProductToDelete(product);
+                          setShowDeleteConfirm(true);
+                        }}
+                        style={styles.deleteButton}
+                        title="Supprimer"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
                   </td>
                 </tr>
               );
@@ -307,6 +405,193 @@ const ClientProducts = () => {
           </div>
         </div>
       )}
+      {/* Modal de création */}
+{showCreateModal && (
+  <div style={styles.modal} onClick={() => setShowCreateModal(false)}>
+    <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <div style={styles.modalHeader}>
+        <h2 style={styles.modalTitle}>Ajouter un Nouveau Produit</h2>
+        <button 
+          onClick={() => setShowCreateModal(false)}
+          style={styles.closeButton}
+        >
+          ×
+        </button>
+      </div>
+
+      <form onSubmit={handleCreate} style={styles.form}>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>SKU *</label>
+          <input
+            type="text"
+            value={formData.sku}
+            onChange={(e) => setFormData({...formData, sku: e.target.value})}
+            style={styles.input}
+            placeholder="Ex: PROD-001"
+            required
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Nom du Produit *</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            style={styles.input}
+            placeholder="Ex: T-Shirt Blanc M"
+            required
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Description</label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({...formData, description: e.target.value})}
+            style={styles.textarea}
+            rows="3"
+            placeholder="Description du produit..."
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Catégorie</label>
+          <input
+            type="text"
+            value={formData.category}
+            onChange={(e) => setFormData({...formData, category: e.target.value})}
+            style={styles.input}
+            placeholder="Ex: Textile"
+          />
+        </div>
+
+        <div style={styles.formRow}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>
+              <Weight size={16} style={{verticalAlign: 'middle', marginRight: '0.25rem'}} />
+              Poids (grammes) *
+            </label>
+            <input
+              type="number"
+              value={formData.weight}
+              onChange={(e) => setFormData({...formData, weight: parseInt(e.target.value) || 0})}
+              style={styles.input}
+              min="0"
+              placeholder="150"
+              required
+            />
+            <span style={styles.helpText}>
+              Poids unitaire du produit en grammes
+            </span>
+          </div>
+
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Seuil de Stock Minimum *</label>
+            <input
+              type="number"
+              value={formData.min_stock_level}
+              onChange={(e) => setFormData({...formData, min_stock_level: parseInt(e.target.value) || 0})}
+              style={styles.input}
+              min="0"
+              placeholder="10"
+              required
+            />
+            <span style={styles.helpText}>
+              Alerte si stock inférieur à cette valeur
+            </span>
+          </div>
+        </div>
+
+        <div style={styles.modalFooter}>
+          <button 
+            type="button"
+            onClick={() => setShowCreateModal(false)}
+            style={styles.cancelButton}
+          >
+            Annuler
+          </button>
+          <button type="submit" style={styles.submitButton}>
+            Créer le Produit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+    {/* Modal de confirmation de suppression */}
+{showDeleteConfirm && productToDelete && (
+  <div style={styles.modal} onClick={() => setShowDeleteConfirm(false)}>
+    <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <div style={styles.modalHeader}>
+        <h2 style={styles.modalTitle}>⚠️ Confirmer la suppression</h2>
+        <button 
+          onClick={() => setShowDeleteConfirm(false)}
+          style={styles.closeButton}
+        >
+          ×
+        </button>
+      </div>
+
+      <div style={{padding: '1.5rem'}}>
+        <p style={{marginBottom: '1rem', color: '#475569'}}>
+          Êtes-vous sûr de vouloir supprimer ce produit ?
+        </p>
+        
+        <div style={{
+          backgroundColor: '#f1f5f9',
+          padding: '1rem',
+          borderRadius: '0.5rem',
+          marginBottom: '1rem',
+        }}>
+          <p><strong>SKU :</strong> {productToDelete.sku}</p>
+          <p><strong>Nom :</strong> {productToDelete.name}</p>
+          <p><strong>Stock actuel :</strong> {productToDelete.total_stock || 0}</p>
+        </div>
+
+        {productToDelete.total_stock > 0 && (
+          <div style={{
+            backgroundColor: '#fef3c7',
+            border: '1px solid #fbbf24',
+            padding: '1rem',
+            borderRadius: '0.5rem',
+            color: '#92400e',
+          }}>
+            <p>⚠️ <strong>Attention :</strong> Ce produit a du stock en entrepôt. La suppression sera impossible.</p>
+          </div>
+        )}
+
+        <p style={{marginTop: '1rem', fontSize: '0.875rem', color: '#64748b'}}>
+          Cette action est <strong>irréversible</strong>.
+        </p>
+      </div>
+
+      <div style={styles.modalFooter}>
+        <button 
+          onClick={() => setShowDeleteConfirm(false)}
+          style={styles.cancelButton}
+        >
+          Annuler
+        </button>
+        <button 
+          onClick={handleDelete}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+          }}
+        >
+          Supprimer définitivement
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };
@@ -569,6 +854,53 @@ const styles = {
     fontSize: '1rem',
     fontWeight: '500',
     cursor: 'pointer',
+  },
+  addButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#3b82f6',
+    color: 'white',
+    border: 'none',
+    borderRadius: '0.5rem',
+    fontSize: '1rem',
+    fontWeight: '500',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+  },
+  deleteButton: {
+    padding: '0.5rem',
+    backgroundColor: 'transparent',
+    color: '#ef4444',
+    border: 'none',
+    borderRadius: '0.375rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: '0.5rem',
+  },
+  textarea: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '0.5rem',
+    fontSize: '1rem',
+    outline: 'none',
+    fontFamily: 'inherit',
+    resize: 'vertical',
+  },
+  formRow: {
+    display: 'flex',
+    gap: '1rem',
+  },
+  helpText: {
+    display: 'block',
+    fontSize: '0.75rem',
+    color: '#64748b',
+    marginTop: '0.25rem',
   },
 };
 
