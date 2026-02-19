@@ -1899,20 +1899,16 @@ async def forgot_password(request: ForgotPasswordRequest):
     })
     
     # Envoyer l'email
-    # TEMPORAIRE : Afficher le lien dans les logs au lieu d'envoyer l'email
-    reset_link = f"https://app.newstaq.com/reset-password?token={reset_token}"
-    print(f"============================================")
-    print(f"RESET PASSWORD LINK FOR: {email}")
-    print(f"LINK: {reset_link}")
-    print(f"TOKEN: {reset_token}")
-    print(f"============================================")
+    email_sent = send_reset_email(email, reset_token)
     
-    # email_sent = send_reset_email(email, reset_token)
-    # if not email_sent:
-    #     raise HTTPException(
-    #         status_code=500,
-    #         detail="Erreur lors de l'envoi de l'email. Veuillez réessayer."
-    #     )
+    if not email_sent:
+        # En cas d'erreur, afficher quand même le lien dans les logs (pour debug)
+        reset_link = f"https://app.newstaq.com/reset-password?token={reset_token}"
+        print(f"⚠️ EMAIL FAILED - Reset link for {email}: {reset_link}")
+        raise HTTPException(
+            status_code=500,
+            detail="Erreur lors de l'envoi de l'email. Veuillez réessayer."
+        )
     
     return {
         "success": True,
