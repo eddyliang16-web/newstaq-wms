@@ -5,10 +5,13 @@ from datetime import datetime, timedelta, timezone
 from bson import ObjectId
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from pymongo import MongoClient
 import httpx
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = FastAPI(title="WMS 3PL API")
 
@@ -16,9 +19,11 @@ app = FastAPI(title="WMS 3PL API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[        
-"https://newstaq-frontend.onrender.com",  # Votre URL frontend en production
-"http://localhost:3000"                    # Pour tester en local
-],
+        "https://newstaq-frontend.onrender.com",  # Frontend Render
+        "https://app.newstaq.com",                 # Frontend custom domain
+        "https://www.newstaq.com",                 # Landing page
+        "http://localhost:3000"                    # Pour tester en local
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -285,6 +290,13 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class ContactForm(BaseModel):
+    name: str
+    company: str = ""
+    email: EmailStr
+    phone: str = ""
+    message: str
+
 @app.post('/api/auth/login')
 def login(data: LoginRequest):
     user = db.users.find_one({'username': data.username, 'active': True})
@@ -293,8 +305,14 @@ def login(data: LoginRequest):
     
     client_name = None
     if user.get('client_id'):
-        client = db.clients.find_one({'_id': user['client_id']})
-        client_name = client['name'] if client else None
+        # Convert client_id to ObjectId for MongoDB query
+        try:
+            from bson import ObjectId
+            client_id_obj = ObjectId(user['client_id']) if isinstance(user['client_id'], str) else user['client_id']
+            client = db.clients.find_one({'_id': client_id_obj})
+            client_name = client['name'] if client else None
+        except:
+            client_name = None
     
     token = create_token(user)
     return {
@@ -308,6 +326,82 @@ def login(data: LoginRequest):
             'client_name': client_name
         }
     }
+
+@app.post('/api/contact')
+def send_contact_email(data: ContactForm):
+    """
+    Endpoint pour gérer le formulaire de contact de la landing page
+    Envoie un email à contact@newstaq.com via Gmail SMTP
+    """
+    try:
+        # Configuration Gmail
+        SMTP_SERVER = "smtp.gmail.com"
+        SMTP_PORT = 587
+        SENDER_EMAIL = os.environ.get('GMAIL_USER', 'your-email@gmail.com')
+        SENDER_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', '')  # App password Google
+        RECIPIENT_EMAIL = 'contact@newstaq.com'
+        
+        # Créer le message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = f'[NEWSTAQ] Nouveau message de {data.name}'
+        msg['From'] = f'Contact NEWSTAQ <{SENDER_EMAIL}>'
+        msg['To'] = RECIPIENT_EMAIL
+        msg['Reply-To'] = data.email
+        
+        # Headers importants pour éviter l'auto-archivage Gmail
+        msg['X-Priority'] = '1'  # Haute priorité
+        msg['Importance'] = 'high'
+        msg['X-MSMail-Priority'] = 'High'
+        
+        # Message ID unique pour éviter la déduplication
+        import random
+        import time
+        msg['Message-ID'] = f'<{int(time.time())}.{random.randint(1000, 9999)}@newstaq.com>'
+        
+        # Corps du message en HTML
+        html_body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">
+                    Nouveau message depuis le site NEWSTAQ
+                </h2>
+                
+                <div style="margin: 20px 0;">
+                    <p><strong>Nom :</strong> {data.name}</p>
+                    <p><strong>Entreprise :</strong> {data.company if data.company else "Non renseignée"}</p>
+                    <p><strong>Email :</strong> <a href="mailto:{data.email}">{data.email}</a></p>
+                    <p><strong>Téléphone :</strong> {data.phone if data.phone else "Non renseigné"}</p>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <p><strong>Message :</strong></p>
+                    <p style="white-space: pre-wrap;">{data.message}</p>
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #64748b;">
+                    <p>Ce message a été envoyé depuis le formulaire de contact de www.newstaq.com</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        # Attacher le HTML
+        part = MIMEText(html_body, 'html')
+        msg.attach(part)
+        
+        # Envoyer l'email
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SENDER_EMAIL, SENDER_PASSWORD)
+            server.send_message(msg)
+        
+        return {'success': True, 'message': 'Email envoyé avec succès'}
+        
+    except Exception as e:
+        print(f"Erreur envoi email: {str(e)}")
+        raise HTTPException(status_code=500, detail='Erreur lors de l\'envoi de l\'email')
 
 @app.get('/api/auth/me')
 def get_me(request: Request):
@@ -326,9 +420,9 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
     
     # Build client filter
     if user['role'] == 'client':
-        client_filter = {'client_id': ObjectId(user['client_id'])}
+        client_filter = {'client_id': user['client_id']}
     elif client_id:
-        client_filter = {'client_id': ObjectId(client_id)}
+        client_filter = {'client_id': client_id}
     else:
         client_filter = {}
     
@@ -345,16 +439,41 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
         stock_result = list(db.products.aggregate(pipeline))
         total_stock = stock_result[0]['total'] if stock_result else 0
     else:
-        products_count = db.products.count_documents({'active': True})
-        total_stock_result = list(db.inventory.aggregate([{'$group': {'_id': None, 'total': {'$sum': '$quantity'}}}]))
+        # Admin viewing all: exclude demo clients
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        
+        products_count = db.products.count_documents({
+            'active': True,
+            'client_id': {'$in': non_demo_client_ids}
+        })
+        
+        total_stock_result = list(db.inventory.aggregate([
+            {'$lookup': {'from': 'products', 'localField': 'product_id', 'foreignField': '_id', 'as': 'product'}},
+            {'$unwind': '$product'},
+            {'$match': {'product.client_id': {'$in': non_demo_client_ids}}},
+            {'$group': {'_id': None, 'total': {'$sum': '$quantity'}}}
+        ]))
         total_stock = total_stock_result[0]['total'] if total_stock_result else 0
     
     # Orders stats
-    orders_total = db.orders.count_documents(client_filter) if client_filter else db.orders.count_documents({})
-    orders_pending = db.orders.count_documents({**client_filter, 'status': 'pending'}) if client_filter else db.orders.count_documents({'status': 'pending'})
+    if client_filter:
+        orders_total = db.orders.count_documents(client_filter)
+        orders_pending = db.orders.count_documents({**client_filter, 'status': 'pending'})
+    else:
+        # Admin: exclude demos
+        orders_total = db.orders.count_documents({'client_id': {'$in': non_demo_client_ids}})
+        orders_pending = db.orders.count_documents({'client_id': {'$in': non_demo_client_ids}, 'status': 'pending'})
     
     # Receipts stats
-    receipts_pending = db.receipts.count_documents({**client_filter, 'status': {'$in': ['planned', 'in_progress']}}) if client_filter else db.receipts.count_documents({'status': {'$in': ['planned', 'in_progress']}})
+    if client_filter:
+        receipts_pending = db.receipts.count_documents({**client_filter, 'status': {'$in': ['planned', 'in_progress']}})
+    else:
+        # Admin: exclude demos
+        receipts_pending = db.receipts.count_documents({'client_id': {'$in': non_demo_client_ids}, 'status': {'$in': ['planned', 'in_progress']}})
     
     # Low stock products
     if client_filter:
@@ -377,20 +496,57 @@ def get_dashboard_stats(request: Request, client_id: Optional[str] = None):
         ]
     
     low_stock_products = list(db.products.aggregate(low_stock_pipeline))
+     # Invoice stats
+    if client_filter:
+        invoices_total = db.invoices.count_documents(client_filter)
+        paid_invoices = db.invoices.count_documents({**client_filter, 'status': 'paid'})
+        
+        # Calculate totals
+        invoice_pipeline = [
+            {'$match': client_filter},
+            {'$group': {
+                '_id': None,
+                'total_billed': {'$sum': '$total'},
+                'outstanding': {'$sum': {
+                    '$cond': [
+                        {'$ne': ['$status', 'paid']},
+                        '$total',
+                        0
+                    ]
+                }}
+            }}
+        ]
+        invoice_stats = list(db.invoices.aggregate(invoice_pipeline))
+        total_billed = invoice_stats[0]['total_billed'] if invoice_stats else 0
+        outstanding_amount = invoice_stats[0]['outstanding'] if invoice_stats else 0
+    else:
+        # Admin: exclude demos
+        invoices_total = db.invoices.count_documents({'client_id': {'$in': non_demo_client_ids}})
+        paid_invoices = db.invoices.count_documents({'client_id': {'$in': non_demo_client_ids}, 'status': 'paid'})
+        total_billed = 0
+        outstanding_amount = 0
     
     return {
-        'stock': {
-            'total_products': products_count,
-            'total_quantity': total_stock
+        'products': {
+            'product_count': products_count,
+            'total_stock': total_stock
         },
         'orders': {
             'total_orders': orders_total,
-            'pending_orders': orders_pending
+            'pending': orders_pending
         },
         'receipts': {
-            'pending_receipts': receipts_pending
+            'total_receipts': receipts_pending,  # For consistency
+            'planned': receipts_pending
         },
-        'low_stock_products': low_stock_products
+        'invoices': {
+            'total_invoices': invoices_total,
+            'outstanding_amount': outstanding_amount,
+            'total_billed': total_billed,
+            'paid': paid_invoices
+        },
+        'low_stock_products': low_stock_products,
+        'recent_orders': []
     }
 
 # ==================== CLIENTS ====================
@@ -436,9 +592,20 @@ def get_products(request: Request, client_id: Optional[str] = None):
     
     query = {'active': True}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None  # Return empty
     
     pipeline = [
         {'$match': query},
@@ -492,17 +659,41 @@ def create_product(data: ProductCreate, request: Request):
 def get_inventory(request: Request, client_id: Optional[str] = None):
     user = get_current_user(request)
     
-    match_stage = {}
-    if user['role'] == 'client':
-        match_stage['client_id'] = ObjectId(user['client_id'])
-    elif client_id:
-        match_stage['client_id'] = ObjectId(client_id)
-    
+    # Build base pipeline
     pipeline = [
-        {'$match': match_stage} if match_stage else {'$match': {}},
         {'$lookup': {'from': 'products', 'localField': 'product_id', 'foreignField': '_id', 'as': 'product'}},
-        {'$lookup': {'from': 'locations', 'localField': 'location_id', 'foreignField': '_id', 'as': 'location'}},
         {'$unwind': '$product'},
+    ]
+    
+    # Add client filter based on user role
+    if user['role'] == 'client':
+        pipeline.append({'$match': {'product.client_id': user['client_id']}})
+    elif client_id:
+        pipeline.append({'$match': {'product.client_id': client_id}})
+    else:
+        # Admin without client_id: exclude demos via lookup
+        # Convert client_id string to ObjectId for lookup
+         pipeline.extend([
+            {'$addFields': {
+                'product_client_id_obj': {'$toObjectId': '$product.client_id'}
+            }},
+            {'$lookup': {
+                'from': 'clients',
+                'localField': 'product_client_id_obj',
+                'foreignField': '_id',
+                'as': 'client_info'
+            }},
+            {'$match': {
+                '$or': [
+                    {'client_info.is_demo': {'$ne': True}},
+                    {'client_info.is_demo': {'$exists': False}}
+                ]
+            }}
+        ])
+    
+    # Continue pipeline
+    pipeline.extend([
+        {'$lookup': {'from': 'locations', 'localField': 'location_id', 'foreignField': '_id', 'as': 'location'}},
         {'$unwind': '$location'},
         {'$lookup': {'from': 'clients', 'localField': 'product.client_id', 'foreignField': '_id', 'as': 'client'}},
         {'$addFields': {
@@ -512,9 +703,9 @@ def get_inventory(request: Request, client_id: Optional[str] = None):
             'client_name': {'$arrayElemAt': ['$client.name', 0]},
             'client_id': '$product.client_id'
         }},
-        {'$project': {'product': 0, 'location': 0, 'client': 0}},
+        {'$project': {'product': 0, 'location': 0, 'client': 0, 'client_info': 0}},
         {'$limit': 500}
-    ]
+    ])
     
     inventory = list(db.inventory.aggregate(pipeline))
     return serialize_doc(inventory)
@@ -526,9 +717,20 @@ def get_orders(request: Request, client_id: Optional[str] = None, status: Option
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None
     if status:
         query['status'] = status
     
@@ -579,9 +781,20 @@ def get_receipts(request: Request, client_id: Optional[str] = None, status: Opti
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None
     if status:
         query['status'] = status
     
@@ -629,9 +842,9 @@ def get_inventory_counts(request: Request, client_id: Optional[str] = None):
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     counts = list(db.inventory_counts.find(query).sort('created_at', -1).limit(50))
     return serialize_doc(counts)
@@ -643,9 +856,20 @@ def get_invoices(request: Request, client_id: Optional[str] = None):
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
+    else:
+        # Admin without client_id: exclude demos
+        non_demo_clients = list(db.clients.find(
+            {'$or': [{'is_demo': {'$ne': True}}, {'is_demo': {'$exists': False}}]},
+            {'_id': 1}
+        ))
+        non_demo_client_ids = [str(c['_id']) for c in non_demo_clients]
+        if non_demo_client_ids:
+            query['client_id'] = {'$in': non_demo_client_ids}
+        else:
+            query['client_id'] = None
     
     pipeline = [
         {'$match': query},
@@ -737,9 +961,9 @@ def get_integrations(request: Request, client_id: Optional[str] = None):
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     pipeline = [
         {'$match': query},
@@ -1000,9 +1224,9 @@ def get_notification_settings(request: Request, client_id: Optional[str] = None)
     
     query = {}
     if user['role'] == 'client':
-        query['client_id'] = ObjectId(user['client_id'])
+        query['client_id'] = user['client_id']
     elif client_id:
-        query['client_id'] = ObjectId(client_id)
+        query['client_id'] = client_id
     
     settings = list(db.notification_settings.find(query))
     return serialize_doc(settings)

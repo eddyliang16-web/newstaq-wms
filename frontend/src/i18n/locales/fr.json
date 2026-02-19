@@ -1,0 +1,256 @@
+{
+  "landing": {
+    "header": {
+      "features": "Fonctionnalités",
+      "benefits": "Avantages",
+      "pricing": "Tarifs",
+      "contact": "Contact",
+      "login": "Connexion"
+    },
+    "hero": {
+      "title": "La Solution WMS 3PL Nouvelle Génération",
+      "subtitle": "Optimisez votre logistique avec NEWSTAQ : gestion d'entrepôt intelligente, intégrations e-commerce complètes et portail client dédié.",
+      "ctaDemo": "Demander une Démo",
+      "ctaApp": "Accéder à l'App",
+      "stats": {
+        "integrations": "Intégrations",
+        "availability": "Disponibilité",
+        "support": "Support"
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités Complètes",
+      "subtitle": "Tous les outils dont vous avez besoin pour gérer votre logistique efficacement",
+      "products": {
+        "title": "Gestion des Produits",
+        "description": "Catalogue complet avec codes-barres, catégories et traçabilité"
+      },
+      "inventory": {
+        "title": "Inventaire Temps Réel",
+        "description": "Suivi précis de votre stock par emplacement et lot"
+      },
+      "orders": {
+        "title": "Gestion des Commandes",
+        "description": "Du picking à l'expédition, workflow optimisé"
+      },
+      "integrations": {
+        "title": "25+ Intégrations",
+        "description": "Shopify, Amazon, Zalando, Chronopost et plus"
+      },
+      "analytics": {
+        "title": "Analytics & Reporting",
+        "description": "Tableaux de bord et statistiques en temps réel"
+      },
+      "billing": {
+        "title": "Facturation Auto",
+        "description": "Génération automatique basée sur l'activité"
+      }
+    },
+    "benefits": {
+      "title": "Pourquoi NEWSTAQ ?",
+      "subtitle": "Une solution pensée pour votre réussite",
+      "security": {
+        "title": "Sécurité Maximale",
+        "description": "Données chiffrées, sauvegardes automatiques, conformité RGPD"
+      },
+      "deployment": {
+        "title": "Déploiement Rapide",
+        "description": "Opérationnel en moins de 48h, formation incluse"
+      },
+      "support": {
+        "title": "Support Réactif",
+        "description": "Équipe dédiée disponible 24/7 pour vous accompagner"
+      },
+      "scalability": {
+        "title": "Scalabilité",
+        "description": "Grandit avec votre business, de 100 à 100 000 commandes/mois"
+      }
+    },
+    "pricing": {
+      "title": "Tarification Transparente",
+      "subtitle": "Des prix clairs et compétitifs adaptés à votre activité",
+      "storage": {
+        "title": "Stockage",
+        "pallet": "Palette EU standard 80cm x 120cm x 150cm",
+        "cubic": "Stockage volumétrique au m³"
+      },
+      "inbound": {
+        "title": "Entrée de Marchandises",
+        "pallet": "Réception d'une palette",
+        "parcel": "Réception d'un colis",
+        "entry": "Entrée et saisie des stocks sur WMS"
+      },
+      "outbound": {
+        "title": "Sortie de Marchandises",
+        "pickpack": "Pick & pack d'un article",
+        "additional": "Pour tout article supplémentaire",
+        "custom": "Packing sur mesure selon instructions",
+        "packaging": "Fourniture carton packaging",
+        "shipping": "Expédition"
+      },
+      "returns": {
+        "title": "Gestion des Retours",
+        "processing": "Réception et traitement des retours"
+      },
+      "insurance": {
+        "title": "Assurance",
+        "description": "Basé sur la valeur d'achat des marchandises"
+      },
+      "setup": {
+        "title": "Mise en Place",
+        "fee": "Frais administratif de mise en place"
+      },
+      "cta": {
+        "text": "Besoin d'un devis personnalisé adapté à vos besoins spécifiques ?",
+        "button": "Demander un Devis Gratuit"
+      }
+    },
+    "contact": {
+      "title": "Recevez Votre Devis Gratuit",
+      "subtitle": "Remplissez le formulaire ci-dessous et notre équipe vous contactera sous 24h",
+      "form": {
+        "name": "Nom complet",
+        "company": "Entreprise",
+        "email": "Email professionnel",
+        "phone": "Téléphone",
+        "message": "Message",
+        "placeholder": {
+          "name": "Jean Dupont",
+          "company": "Nom de votre entreprise",
+          "email": "contact@entreprise.com",
+          "phone": "+33 6 12 34 56 78",
+          "message": "Parlez-nous de votre projet..."
+        },
+        "submit": "Recevoir mon Devis Gratuit sous 24h",
+        "submitting": "Envoi en cours...",
+        "success": "Merci pour votre demande ! Notre équipe vous contactera sous 24h.",
+        "error": "Une erreur est survenue. Veuillez réessayer ou nous contacter à contact@newstaq.com"
+      },
+      "info": {
+        "title": "Nous Contacter",
+        "email": "Email",
+        "address": "Adresse",
+        "hours": "Horaires",
+        "hoursValue": "Lun - Ven : 9h - 18h\nRéponse sous 24h"
+      }
+    },
+    "footer": {
+      "description": "Votre partenaire logistique pour une gestion d'entrepôt optimale",
+      "product": "Produit",
+      "company": "Entreprise",
+      "legal": "Légal",
+      "copyright": "© 2026 NEWSTAQ. Tous droits réservés.",
+      "about": "À propos",
+      "demo": "Démo",
+      "mentions": "Mentions légales",
+      "cgv": "CGV",
+      "rgpd": "RGPD"
+    }
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "clients": "Clients",
+      "products": "Produits",
+      "orders": "Commandes",
+      "inventory": "Inventaire",
+      "receptions": "Réceptions",
+      "invoices": "Facturation",
+      "notifications": "Notifications",
+      "profile": "Mon Profil",
+      "logout": "Déconnexion"
+    },
+    "dashboard": {
+      "title": "Tableau de Bord Administrateur",
+      "totalClients": "Clients Actifs",
+      "totalProducts": "Produits en Stock",
+      "pendingOrders": "Commandes en Attente",
+      "monthlyRevenue": "CA du Mois",
+      "recentOrders": "Commandes Récentes",
+      "lowStock": "Produits en Stock Faible"
+    },
+    "clients": {
+      "title": "Gestion des Clients",
+      "createNew": "Créer un Nouveau Client",
+      "active": "actif(s)",
+      "viewDetails": "Voir Détails",
+      "form": {
+        "companyName": "Nom de l'Entreprise",
+        "email": "Email",
+        "phone": "Téléphone",
+        "address": "Adresse",
+        "city": "Ville",
+        "postalCode": "Code Postal",
+        "country": "Pays",
+        "siren": "Numéro SIREN",
+        "contactInfo": "Coordonnées de l'Interlocuteur",
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "contactEmail": "Email",
+        "contactPhone": "Téléphone",
+        "cancel": "Annuler",
+        "create": "Créer le Client",
+        "success": "Client créé avec succès !",
+        "error": "Erreur lors de la création du client"
+      }
+    },
+    "products": {
+      "title": "Gestion des Produits",
+      "search": "Rechercher un produit...",
+      "filter": "Filtrer par client",
+      "allClients": "Tous les clients",
+      "addProduct": "Ajouter un Produit",
+      "inStock": "En stock",
+      "lowStock": "Stock faible",
+      "outOfStock": "Rupture"
+    },
+    "orders": {
+      "title": "Gestion des Commandes",
+      "filter": "Filtrer par statut",
+      "all": "Toutes",
+      "pending": "En attente",
+      "processing": "En préparation",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée"
+    }
+  },
+  "client": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "products": "Mes Produits",
+      "orders": "Mes Commandes",
+      "inventory": "Mon Inventaire",
+      "receptions": "Réceptions",
+      "invoices": "Factures",
+      "notifications": "Notifications",
+      "profile": "Mon Profil",
+      "logout": "Déconnexion"
+    },
+    "dashboard": {
+      "title": "Tableau de Bord Client",
+      "welcome": "Bienvenue",
+      "totalProducts": "Produits en Stock",
+      "pendingOrders": "Commandes en Cours",
+      "recentReceptions": "Réceptions Récentes",
+      "monthlyActivity": "Activité du Mois"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "search": "Rechercher...",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "refresh": "Actualiser"
+  }
+}

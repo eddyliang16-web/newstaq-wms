@@ -1,0 +1,256 @@
+{
+  "landing": {
+    "header": {
+      "features": "Features",
+      "benefits": "Benefits",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "login": "Login"
+    },
+    "hero": {
+      "title": "Next-Generation 3PL WMS Solution",
+      "subtitle": "Optimize your logistics with NEWSTAQ: intelligent warehouse management, comprehensive e-commerce integrations, and dedicated client portal.",
+      "ctaDemo": "Request a Demo",
+      "ctaApp": "Access App",
+      "stats": {
+        "integrations": "Integrations",
+        "availability": "Uptime",
+        "support": "Support"
+      }
+    },
+    "features": {
+      "title": "Complete Features",
+      "subtitle": "All the tools you need to manage your logistics efficiently",
+      "products": {
+        "title": "Product Management",
+        "description": "Complete catalog with barcodes, categories and traceability"
+      },
+      "inventory": {
+        "title": "Real-Time Inventory",
+        "description": "Precise tracking of your stock by location and batch"
+      },
+      "orders": {
+        "title": "Order Management",
+        "description": "From picking to shipping, optimized workflow"
+      },
+      "integrations": {
+        "title": "25+ Integrations",
+        "description": "Shopify, Amazon, Zalando, Chronopost and more"
+      },
+      "analytics": {
+        "title": "Analytics & Reporting",
+        "description": "Real-time dashboards and statistics"
+      },
+      "billing": {
+        "title": "Auto Billing",
+        "description": "Automatic generation based on activity"
+      }
+    },
+    "benefits": {
+      "title": "Why NEWSTAQ?",
+      "subtitle": "A solution designed for your success",
+      "security": {
+        "title": "Maximum Security",
+        "description": "Encrypted data, automatic backups, GDPR compliance"
+      },
+      "deployment": {
+        "title": "Fast Deployment",
+        "description": "Operational in less than 48h, training included"
+      },
+      "support": {
+        "title": "Responsive Support",
+        "description": "Dedicated team available 24/7 to assist you"
+      },
+      "scalability": {
+        "title": "Scalability",
+        "description": "Grows with your business, from 100 to 100,000 orders/month"
+      }
+    },
+    "pricing": {
+      "title": "Transparent Pricing",
+      "subtitle": "Clear and competitive prices tailored to your business",
+      "storage": {
+        "title": "Storage",
+        "pallet": "Standard EU pallet 80cm x 120cm x 150cm",
+        "cubic": "Volumetric storage per m³"
+      },
+      "inbound": {
+        "title": "Inbound",
+        "pallet": "Pallet reception",
+        "parcel": "Parcel reception",
+        "entry": "Stock entry and recording in WMS"
+      },
+      "outbound": {
+        "title": "Outbound",
+        "pickpack": "Pick & pack per item",
+        "additional": "For each additional item",
+        "custom": "Custom packing per instructions",
+        "packaging": "Packaging materials supply",
+        "shipping": "Shipping"
+      },
+      "returns": {
+        "title": "Returns Management",
+        "processing": "Returns reception and processing"
+      },
+      "insurance": {
+        "title": "Insurance",
+        "description": "Based on merchandise purchase value"
+      },
+      "setup": {
+        "title": "Setup",
+        "fee": "Administrative setup fee"
+      },
+      "cta": {
+        "text": "Need a custom quote tailored to your specific needs?",
+        "button": "Request a Free Quote"
+      }
+    },
+    "contact": {
+      "title": "Get Your Free Quote",
+      "subtitle": "Fill out the form below and our team will contact you within 24h",
+      "form": {
+        "name": "Full Name",
+        "company": "Company",
+        "email": "Business Email",
+        "phone": "Phone",
+        "message": "Message",
+        "placeholder": {
+          "name": "John Doe",
+          "company": "Your company name",
+          "email": "contact@company.com",
+          "phone": "+1 234 567 8900",
+          "message": "Tell us about your project..."
+        },
+        "submit": "Get My Free Quote within 24h",
+        "submitting": "Sending...",
+        "success": "Thank you for your request! Our team will contact you within 24h.",
+        "error": "An error occurred. Please try again or contact us at contact@newstaq.com"
+      },
+      "info": {
+        "title": "Contact Us",
+        "email": "Email",
+        "address": "Address",
+        "hours": "Hours",
+        "hoursValue": "Mon - Fri: 9am - 6pm\nResponse within 24h"
+      }
+    },
+    "footer": {
+      "description": "Your logistics partner for optimal warehouse management",
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "copyright": "© 2026 NEWSTAQ. All rights reserved.",
+      "about": "About",
+      "demo": "Demo",
+      "mentions": "Legal Notice",
+      "cgv": "Terms",
+      "rgpd": "Privacy"
+    }
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "clients": "Clients",
+      "products": "Products",
+      "orders": "Orders",
+      "inventory": "Inventory",
+      "receptions": "Receptions",
+      "invoices": "Invoicing",
+      "notifications": "Notifications",
+      "profile": "My Profile",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Administrator Dashboard",
+      "totalClients": "Active Clients",
+      "totalProducts": "Products in Stock",
+      "pendingOrders": "Pending Orders",
+      "monthlyRevenue": "Monthly Revenue",
+      "recentOrders": "Recent Orders",
+      "lowStock": "Low Stock Products"
+    },
+    "clients": {
+      "title": "Client Management",
+      "createNew": "Create New Client",
+      "active": "active",
+      "viewDetails": "View Details",
+      "form": {
+        "companyName": "Company Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "city": "City",
+        "postalCode": "Postal Code",
+        "country": "Country",
+        "siren": "SIREN Number",
+        "contactInfo": "Contact Information",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "contactEmail": "Email",
+        "contactPhone": "Phone",
+        "cancel": "Cancel",
+        "create": "Create Client",
+        "success": "Client created successfully!",
+        "error": "Error creating client"
+      }
+    },
+    "products": {
+      "title": "Product Management",
+      "search": "Search product...",
+      "filter": "Filter by client",
+      "allClients": "All clients",
+      "addProduct": "Add Product",
+      "inStock": "In stock",
+      "lowStock": "Low stock",
+      "outOfStock": "Out of stock"
+    },
+    "orders": {
+      "title": "Order Management",
+      "filter": "Filter by status",
+      "all": "All",
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "client": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "products": "My Products",
+      "orders": "My Orders",
+      "inventory": "My Inventory",
+      "receptions": "Receptions",
+      "invoices": "Invoices",
+      "notifications": "Notifications",
+      "profile": "My Profile",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Client Dashboard",
+      "welcome": "Welcome",
+      "totalProducts": "Products in Stock",
+      "pendingOrders": "Pending Orders",
+      "recentReceptions": "Recent Receptions",
+      "monthlyActivity": "Monthly Activity"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "search": "Search...",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh"
+  }
+}

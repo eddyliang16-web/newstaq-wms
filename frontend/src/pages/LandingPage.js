@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import { 
   Package, Warehouse, ShoppingCart, TrendingUp, 
   BarChart3, Clock, Shield, Zap, ChevronRight,
@@ -19,8 +21,9 @@ if (typeof document !== 'undefined') {
     document.head.appendChild(style);
   }
 
-const LandingPage = () => {
+  const LandingPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -61,16 +64,16 @@ const LandingPage = () => {
       if (response.ok) {
         setFormStatus({
           type: 'success',
-          message: 'Merci pour votre demande ! Notre équipe vous contactera sous 24h.'
+          message: t('landing.contact.form.success')
         });
         setFormData({ name: '', company: '', email: '', phone: '', message: '' });
       } else {
-        throw new Error(data.detail || 'Erreur lors de l\'envoi');
+        throw new Error(data.detail || t('landing.contact.form.error'));
       }
     } catch (error) {
       setFormStatus({
         type: 'error',
-        message: 'Une erreur est survenue. Veuillez réessayer ou nous contacter à contact@newstaq.com'
+        message: t('landing.contact.form.error')
       });
       console.error('Erreur:', error);
     } finally {
@@ -81,51 +84,46 @@ const LandingPage = () => {
   const features = [
     {
       icon: Package,
-      title: 'Gestion des Produits',
-      description: 'Catalogue complet avec codes-barres, catégories et traçabilité'
+      key: 'products'
     },
     {
       icon: Warehouse,
-      title: 'Inventaire Temps Réel',
-      description: 'Suivi précis de votre stock par emplacement et lot'
+      key: 'inventory'
     },
     {
       icon: ShoppingCart,
-      title: 'Gestion des Commandes',
-      description: 'Du picking à l\'expédition, workflow optimisé'
+      key: 'orders'
     },
     {
       icon: TrendingUp,
-      title: '25+ Intégrations',
-      description: 'Shopify, Amazon, Zalando, Chronopost et plus'
+      key: 'integrations'
     },
     {
       icon: BarChart3,
-      title: 'Analytics & Reporting',
-      description: 'Tableaux de bord et statistiques en temps réel'
+      key: 'analytics'
     },
     {
       icon: Clock,
-      title: 'Facturation Auto',
-      description: 'Génération automatique basée sur l\'activité'
+      key: 'billing'
     }
   ];
 
   const benefits = [
     {
       icon: Shield,
-      title: 'Sécurité Maximale',
-      description: 'Données chiffrées, sauvegardes automatiques, conformité RGPD'
+      key: 'security'
     },
     {
       icon: Zap,
-      title: 'Déploiement Rapide',
-      description: 'Opérationnel en moins de 48h, formation incluse'
+      key: 'deployment'
+    },
+    {
+      icon: Check,
+      key: 'support'
     },
     {
       icon: TrendingUp,
-      title: 'Évolutif',
-      description: 'S\'adapte à votre croissance, de 100 à 100 000 commandes/mois'
+      key: 'scalability'
     }
   ];
 
@@ -145,23 +143,25 @@ const LandingPage = () => {
           )}
           {!isMobile && (
           <nav style={styles.nav}>
-            <a href="#features" style={styles.navLink}>Fonctionnalités</a>
-            <a href="#benefits" style={styles.navLink}>Avantages</a>
-            <a href="#pricing" style={styles.navLink}>Tarifs</a>
-            <a href="#contact" style={styles.navLink}>Contact</a>
-            <button onClick={() => navigate('/login')} style={styles.loginButton}>
-              Connexion
-            </button>
-          </nav>
+          <a href="#features" style={styles.navLink}>{t('landing.header.features')}</a>
+          <a href="#benefits" style={styles.navLink}>{t('landing.header.benefits')}</a>
+          <a href="#pricing" style={styles.navLink}>{t('landing.header.pricing')}</a>
+          <a href="#contact" style={styles.navLink}>{t('landing.header.contact')}</a>
+          <LanguageSwitcher />  {/* ← AJOUTER */}
+          <button onClick={() => navigate('/login')} style={styles.loginButton}>
+            {t('landing.header.login')}
+          </button>
+        </nav>
           )}
         </div>
         {isMobile && isMobileMenuOpen && (
           <nav style={styles.mobileMenu}>
-            <a href="#features" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Fonctionnalités</a>
-            <a href="#benefits" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Avantages</a>
-            <a href="#pricing" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Tarifs</a>
-            <a href="#contact" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Contact</a>
-            <button onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} style={styles.mobileLoginButton}>Connexion</button>
+            <a href="#features" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('landing.header.features')}</a>
+            <a href="#benefits" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('landing.header.benefits')}</a>
+            <a href="#pricing" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('landing.header.pricing')}</a>
+            <a href="#contact" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('landing.header.contact')}</a>
+            <LanguageSwitcher isMobile={true} />
+            <button onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} style={styles.mobileLoginButton}>{t('landing.header.login')}</button>
           </nav>
         )}
       </header>
@@ -169,34 +169,32 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section style={styles.hero}>
         <div style={styles.heroContent}>
-          <h1 style={styles.heroTitle}>
-            La Solution WMS 3PL<br />
-            Nouvelle Génération
-          </h1>
-          <p style={styles.heroSubtitle}>
-            Optimisez votre logistique avec NEWSTAQ : gestion d'entrepôt intelligente, 
-            intégrations e-commerce complètes et portail client dédié.
-          </p>
+        <h1 style={styles.heroTitle}>
+          {t('landing.hero.title')}
+        </h1>
+        <p style={styles.heroSubtitle}>
+          {t('landing.hero.subtitle')}
+        </p>
           <div style={styles.heroButtons}>
-            <a href="#contact" style={styles.ctaButton}>
-              Demander une Démo
-            </a>
-            <button onClick={() => navigate('/login')} style={styles.secondaryButton}>
-              Accéder à l'App
-            </button>
+          <button onClick={() => navigate('/login')} style={styles.ctaButton}>
+           {t('landing.hero.ctaApp')}
+          </button>
+          <a href="#contact" style={styles.secondaryButton}>
+            {t('landing.hero.ctaDemo')}
+          </a>
           </div>
           <div style={styles.heroStats}>
             <div style={styles.stat}>
               <div style={styles.statNumber}>25+</div>
-              <div style={styles.statLabel}>Intégrations</div>
+              <div style={styles.statLabel}>{t('landing.hero.stats.integrations')}</div>
             </div>
             <div style={styles.stat}>
               <div style={styles.statNumber}>99.9%</div>
-              <div style={styles.statLabel}>Disponibilité</div>
+              <div style={styles.statLabel}>{t('landing.hero.stats.availability')}</div>
             </div>
             <div style={styles.stat}>
               <div style={styles.statNumber}>24/7</div>
-              <div style={styles.statLabel}>Support</div>
+              <div style={styles.statLabel}>{t('landing.hero.stats.support')}</div>
             </div>
           </div>
         </div>
@@ -205,21 +203,21 @@ const LandingPage = () => {
       {/* Features Section */}
       <section id="features" style={styles.section}>
         <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Fonctionnalités Complètes</h2>
+        <h2 style={styles.sectionTitle}>{t('landing.features.title')}</h2>
           <p style={styles.sectionSubtitle}>
-            Tout ce dont vous avez besoin pour gérer efficacement votre activité 3PL
+            {t('landing.features.subtitle')}
           </p>
           <div style={styles.featuresGrid}>
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div key={index} style={styles.featureCard}>
-                  <div style={styles.featureIcon}>
-                    <Icon size={28} color="#3b82f6" />
-                  </div>
-                  <h3 style={styles.featureTitle}>{feature.title}</h3>
-                  <p style={styles.featureDescription}>{feature.description}</p>
+                <div style={styles.featureIcon}>
+                  <feature.icon size={28} color="#3b82f6" />
                 </div>
+              <h3 style={styles.featureTitle}>{t(`landing.features.${feature.key}.title`)}</h3>
+            <p style={styles.featureDescription}>{t(`landing.features.${feature.key}.description`)}</p>
+          </div>
               );
             })}
           </div>
@@ -229,16 +227,16 @@ const LandingPage = () => {
       {/* Benefits Section */}
       <section id="benefits" style={styles.benefitsSection}>
         <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Pourquoi Choisir NEWSTAQ ?</h2>
+        <h2 style={styles.sectionTitle}>{t('landing.benefits.title')}</h2>
           <div style={styles.benefitsGrid}>
-            {benefits.map((benefit, index) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={index} style={styles.benefitCard}>
-                  <Icon size={48} color="#3b82f6" />
-                  <h3 style={styles.benefitTitle}>{benefit.title}</h3>
-                  <p style={styles.benefitDescription}>{benefit.description}</p>
-                </div>
+          {benefits.map((benefit, index) => (
+         <div key={index} style={styles.benefitCard}>
+          <div style={styles.benefitIcon}>
+           <benefit.icon size={28} color="#10b981" />
+        </div>
+          <h3 style={styles.benefitTitle}>{t(`landing.benefits.${benefit.key}.title`)}</h3>
+          <p style={styles.benefitDescription}>{t(`landing.benefits.${benefit.key}.description`)}</p>
+           </div>
               );
             })}
           </div>
@@ -275,25 +273,25 @@ const LandingPage = () => {
       {/* Pricing Section */}
       <section id="pricing" style={styles.pricingSection}>
         <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Tarification Transparente</h2>
-          <p style={styles.sectionSubtitle}>
-            Des prix clairs et compétitifs adaptés à votre activité
-          </p>
+        <h2 style={styles.sectionTitle}>{t('landing.pricing.title')}</h2>
+        <p style={styles.sectionSubtitle}>
+          {t('landing.pricing.subtitle')}
+        </p>
           
           <div style={styles.pricingCategoriesGrid}>
             {/* Stockage */}
             <div style={styles.categoryCard}>
               <div style={{...styles.categoryHeader, backgroundColor: '#3b82f6'}}>
                 <span style={styles.categoryIcon}>📦</span>
-                <h3 style={styles.categoryTitle}>Stockage</h3>
+                <h3 style={styles.categoryTitle}>{t('landing.pricing.storage.title')}</h3>
               </div>
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Palette EU standard 80cm x 120cm x 150cm</span>
+                <span style={styles.priceService}>{t('landing.pricing.storage.pallet')}</span>
                   <span style={styles.priceValue}>10€ / mois</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Stockage volumétrique au m³</span>
+                <span style={styles.priceService}>{t('landing.pricing.storage.cubic')}</span>
                   <span style={styles.priceValue}>7€ / m³ / mois</span>
                 </div>
               </div>
@@ -303,19 +301,19 @@ const LandingPage = () => {
             <div style={styles.categoryCard}>
               <div style={{...styles.categoryHeader, backgroundColor: '#10b981'}}>
                 <span style={styles.categoryIcon}>📥</span>
-                <h3 style={styles.categoryTitle}>Entrée de Marchandises</h3>
+                <h3 style={styles.categoryTitle}>{t('landing.pricing.inbound.title')}</h3>
               </div>
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Réception d'une palette</span>
+                <span style={styles.priceService}>{t('landing.pricing.inbound.pallet')}</span>
                   <span style={styles.priceValue}>3€ / palette</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Réception d'un colis</span>
+                <span style={styles.priceService}>{t('landing.pricing.inbound.parcel')}</span>
                   <span style={styles.priceValue}>1€ / colis</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Entrée et saisie des stocks sur WMS</span>
+                <span style={styles.priceService}>{t('landing.pricing.inbound.entry')}</span>
                   <span style={styles.priceValue}>2,50€ / SKU</span>
                 </div>
               </div>
@@ -325,27 +323,27 @@ const LandingPage = () => {
             <div style={styles.categoryCard}>
               <div style={{...styles.categoryHeader, backgroundColor: '#f59e0b'}}>
                 <span style={styles.categoryIcon}>📤</span>
-                <h3 style={styles.categoryTitle}>Sortie de Marchandises</h3>
+                <h3 style={styles.categoryTitle}>{t('landing.pricing.outbound.title')}</h3>
               </div>
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Pick & pack d'un article</span>
+                <span style={styles.priceService}>{t('landing.pricing.outbound.pickpack')}</span>
                   <span style={styles.priceValue}>2,80€ / commande</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Pour tout article supplémentaire</span>
+                <span style={styles.priceService}>{t('landing.pricing.outbound.additional')}</span>
                   <span style={styles.priceValue}>+0,20€ / article</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Packing sur mesure selon instructions</span>
+                <span style={styles.priceService}>{t('landing.pricing.outbound.custom')}</span>
                   <span style={styles.priceValue}>Sur devis</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Fourniture carton packaging</span>
+                <span style={styles.priceService}>{t('landing.pricing.outbound.packaging')}</span>
                   <span style={styles.priceValue}>Sur devis</span>
                 </div>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Expédition</span>
+                <span style={styles.priceService}>{t('landing.pricing.outbound.shipping')}</span>
                   <span style={styles.priceValue}>Selon transporteur</span>
                 </div>
               </div>
@@ -355,11 +353,11 @@ const LandingPage = () => {
             <div style={styles.categoryCard}>
               <div style={{...styles.categoryHeader, backgroundColor: '#8b5cf6'}}>
                 <span style={styles.categoryIcon}>🔄</span>
-                <h3 style={styles.categoryTitle}>Gestion des Retours</h3>
+                <h3 style={styles.categoryTitle}>{t('landing.pricing.returns.title')}</h3>
               </div>
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Réception et traitement des retours</span>
+                <span style={styles.priceService}>{t('landing.pricing.returns.processing')}</span>
                   <span style={styles.priceValue}>2,20€ / retour</span>
                 </div>
               </div>
@@ -369,11 +367,11 @@ const LandingPage = () => {
             <div style={styles.categoryCard}>
               <div style={{...styles.categoryHeader, backgroundColor: '#ef4444'}}>
                 <span style={styles.categoryIcon}>🛡️</span>
-                <h3 style={styles.categoryTitle}>Assurance</h3>
+                <h3 style={styles.categoryTitle}>{t('landing.pricing.insurance.title')}</h3>
               </div>
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Basé sur la valeur d'achat des marchandises</span>
+                <span style={styles.priceService}>{t('landing.pricing.insurance.description')}</span>
                   <span style={styles.priceValue}>Sur devis</span>
                 </div>
               </div>
@@ -383,11 +381,11 @@ const LandingPage = () => {
             <div style={styles.categoryCard}>
               <div style={{...styles.categoryHeader, backgroundColor: '#06b6d4'}}>
                 <span style={styles.categoryIcon}>🚀</span>
-                <h3 style={styles.categoryTitle}>Mise en Place</h3>
+                <h3 style={styles.categoryTitle}>{t('landing.pricing.setup.title')}</h3>
               </div>
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
-                  <span style={styles.priceService}>Frais administratif de mise en place</span>
+                <span style={styles.priceService}>{t('landing.pricing.setup.fee')}</span>
                   <span style={styles.priceValue}>49€</span>
                 </div>
               </div>
@@ -397,10 +395,10 @@ const LandingPage = () => {
           {/* CTA */}
           <div style={styles.pricingCTA}>
             <p style={styles.ctaText}>
-              Besoin d'un devis personnalisé adapté à vos besoins spécifiques ?
+            {t('landing.pricing.cta.text')}
             </p>
             <a href="#contact" style={styles.ctaButton}>
-              Demander un Devis Gratuit
+            {t('landing.pricing.cta.button')}
             </a>
           </div>
         </div>
@@ -409,94 +407,94 @@ const LandingPage = () => {
       {/* Contact Form */}
       <section id="contact" style={styles.contactSection}>
         <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle}>Recevez Votre Devis Gratuit</h2>
-          <p style={styles.sectionSubtitle}>
-            Remplissez le formulaire ci-dessous et notre équipe vous contactera sous 24h
-          </p>
+        <h2 style={styles.sectionTitle}>{t('landing.contact.title')}</h2>
+        <p style={styles.sectionSubtitle}>
+          {t('landing.contact.subtitle')}
+        </p>
           <div style={styles.contactContainer}>
             <form onSubmit={handleSubmit} style={styles.contactForm}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Nom complet *</label>
-                <div style={styles.inputWrapper}>
-                  <User size={20} color="#64748b" style={styles.inputIcon} />
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    style={styles.input}
-                    placeholder="Jean Dupont"
-                  />
-                </div>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Entreprise *</label>
-                <div style={styles.inputWrapper}>
-                  <Building size={20} color="#64748b" style={styles.inputIcon} />
-                  <input
-                    type="text"
-                    required
-                    value={formData.company}
-                    onChange={(e) => setFormData({...formData, company: e.target.value})}
-                    style={styles.input}
-                    placeholder="Nom de votre entreprise"
-                  />
-                </div>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Email professionnel *</label>
-                <div style={styles.inputWrapper}>
-                  <Mail size={20} color="#64748b" style={styles.inputIcon} />
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    style={styles.input}
-                    placeholder="contact@entreprise.com"
-                  />
-                </div>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Téléphone</label>
-                <div style={styles.inputWrapper}>
-                  <Phone size={20} color="#64748b" style={styles.inputIcon} />
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    style={styles.input}
-                    placeholder="+33 6 12 34 56 78"
-                  />
-                </div>
-              </div>
-
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Message</label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({...formData, message: e.target.value})}
-                  style={styles.textarea}
-                  placeholder="Parlez-nous de votre projet..."
-                  rows="4"
+            <div style={styles.formGroup}>
+            <label style={styles.label}>{t('landing.contact.form.name')} *</label>
+              <div style={styles.inputWrapper}>
+               <User size={20} color="#64748b" style={styles.inputIcon} />
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  style={styles.input}
+                  placeholder={t('landing.contact.form.placeholder.name')}
                 />
               </div>
+            </div>
 
-              <button 
-                type="submit" 
-                style={{
-                  ...styles.submitButton,
-                  opacity: isSubmitting ? 0.7 : 1,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
-                }}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Envoi en cours...' : 'Recevoir mon Devis Gratuit sous 24h'}
-                <ChevronRight size={20} />
-              </button>
+              <div style={styles.formGroup}>
+              <label style={styles.label}>{t('landing.contact.form.company')} *</label>
+              <div style={styles.inputWrapper}>
+                <Building size={20} color="#64748b" style={styles.inputIcon} />
+                <input
+                  type="text"
+                  required
+                  value={formData.company}
+                  onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  style={styles.input}
+                  placeholder={t('landing.contact.form.placeholder.company')}
+                />
+              </div>
+            </div>
+
+              <div style={styles.formGroup}>
+              <label style={styles.label}>{t('landing.contact.form.email')} *</label>
+              <div style={styles.inputWrapper}>
+                <Mail size={20} color="#64748b" style={styles.inputIcon} />
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  style={styles.input}
+                  placeholder={t('landing.contact.form.placeholder.email')}
+                />
+              </div>
+            </div>
+
+            <div style={styles.formGroup}>
+            <label style={styles.label}>{t('landing.contact.form.phone')}</label>
+            <div style={styles.inputWrapper}>
+              <Phone size={20} color="#64748b" style={styles.inputIcon} />
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                style={styles.input}
+                placeholder={t('landing.contact.form.placeholder.phone')}
+              />
+            </div>
+          </div>
+
+          <div style={styles.formGroup}>
+          <label style={styles.label}>{t('landing.contact.form.message')}</label>
+          <textarea
+            value={formData.message}
+            onChange={(e) => setFormData({...formData, message: e.target.value})}
+            style={styles.textarea}
+            placeholder={t('landing.contact.form.placeholder.message')}
+            rows={isMobile ? "3" : "4"}
+          />
+        </div>
+
+            <button 
+            type="submit" 
+            style={{
+              ...styles.submitButton,
+              opacity: isSubmitting ? 0.7 : 1,
+              cursor: isSubmitting ? 'not-allowed' : 'pointer'
+            }}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? t('landing.contact.form.submitting') : t('landing.contact.form.submit')}
+            {!isSubmitting && <ChevronRight size={20} />}
+          </button>
 
               {formStatus.message && (
                 <div style={{
@@ -515,12 +513,12 @@ const LandingPage = () => {
             </form>
 
             <div style={styles.contactInfo}>
-              <h3 style={styles.contactInfoTitle}>Nous Contacter</h3>
+              <h3 style={styles.contactInfoTitle}>{t('landing.contact.info.title')}</h3>
               
               <div style={styles.contactInfoItem}>
-                <Mail size={24} color="#3b82f6" />
+              <Mail size={isMobile ? 20 : 24} color="#3b82f6" style={{ flexShrink: 0 }} />
                 <div>
-                  <div style={styles.contactInfoLabel}>Email</div>
+                  <div style={styles.contactInfoLabel}>{t('landing.contact.info.email')}</div>
                   <a href="mailto:contact@newstaq.com" style={styles.contactInfoValue}>
                     contact@newstaq.com
                   </a>
@@ -530,7 +528,7 @@ const LandingPage = () => {
               <div style={styles.contactInfoItem}>
                 <MapPin size={24} color="#3b82f6" />
                 <div>
-                  <div style={styles.contactInfoLabel}>Adresse</div>
+                  <div style={styles.contactInfoLabel}>{t('landing.contact.info.address')}</div>
                   <div style={styles.contactInfoValue}>
                     1 rue d'Ableval<br />
                     95200 Sarcelles<br />
@@ -542,10 +540,9 @@ const LandingPage = () => {
               <div style={styles.contactInfoItem}>
                 <Clock size={24} color="#3b82f6" />
                 <div>
-                  <div style={styles.contactInfoLabel}>Horaires</div>
+                  <div style={styles.contactInfoLabel}>{t('landing.contact.info.hours')}</div>
                   <div style={styles.contactInfoValue}>
-                    Lun - Ven : 9h - 20h<br />
-                    Réponse sous 24h
+                  {t('landing.contact.info.hoursValue')}
                   </div>
                 </div>
               </div>
@@ -563,34 +560,34 @@ const LandingPage = () => {
               <span style={styles.footerLogoText}>NEWSTAQ</span>
             </div>
             <p style={styles.footerDescription}>
-              Solution WMS 3PL nouvelle génération pour optimiser votre logistique.
+            {t('landing.footer.description')}
             </p>
           </div>
 
           <div style={styles.footerSection}>
-            <h4 style={styles.footerTitle}>Produit</h4>
-            <a href="#features" style={styles.footerLink}>Fonctionnalités</a>
-            <a href="#pricing" style={styles.footerLink}>Tarifs</a>
-            <a href="#contact" style={styles.footerLink}>Démo</a>
+            <h4 style={styles.footerTitle}>{t('landing.footer.product')}</h4>
+            <a href="#features" style={styles.footerLink}>{t('landing.header.features')}</a>
+            <a href="#pricing" style={styles.footerLink}>{t('landing.header.pricing')}</a>
+            <a href="#contact" style={styles.footerLink}>{t('landing.footer.demo')}</a>
           </div>
 
           <div style={styles.footerSection}>
-            <h4 style={styles.footerTitle}>Entreprise</h4>
-            <a href="#contact" style={styles.footerLink}>Contact</a>
-            <a href="#" style={styles.footerLink}>À propos</a>
+            <h4 style={styles.footerTitle}>{t('landing.footer.company')}</h4>
+            <a href="#contact" style={styles.footerLink}>{t('landing.header.contact')}</a>
+            <a href="#" style={styles.footerLink}>{t('landing.footer.about')}</a>
           </div>
 
           <div style={styles.footerSection}>
-            <h4 style={styles.footerTitle}>Légal</h4>
-            <Link to="/mentions-legales" style={styles.footerLink}>Mentions légales</Link>
-            <Link to="/cgv" style={styles.footerLink}>CGV</Link>
-            <Link to="/rgpd" style={styles.footerLink}>RGPD</Link>
+            <h4 style={styles.footerTitle}>{t('landing.footer.legal')}</h4>
+            <Link to="/mentions-legales" style={styles.footerLink}>{t('landing.footer.mentions')}</Link>
+            <Link to="/cgv" style={styles.footerLink}>{t('landing.footer.cgv')}</Link>
+            <Link to="/rgpd" style={styles.footerLink}>{t('landing.footer.rgpd')}</Link>
           </div>
         </div>
 
         <div style={styles.footerBottom}>
           <p style={styles.footerCopyright}>
-            © 2026 NEWSTAQ. Tous droits réservés.
+          {t('landing.footer.copyright')}
           </p>
         </div>
       </footer>
