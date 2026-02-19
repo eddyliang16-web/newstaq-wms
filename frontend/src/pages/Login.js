@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Warehouse, AlertCircle, User, Building2 } from 'lucide-react';
 
@@ -88,6 +88,15 @@ const Login = () => {
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
+
+            <div className="text-center mt-4">
+              <Link 
+                to="/forgot-password"
+                className="text-sm text-blue-500 hover:text-blue-600 font-medium transition-colors"
+              >
+                Mot de passe oublié ?
+              </Link>
+            </div>
           </form>
 
           

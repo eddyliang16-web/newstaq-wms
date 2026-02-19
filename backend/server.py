@@ -12,6 +12,11 @@ import httpx
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import secrets
+from datetime import datetime, timedelta
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = FastAPI(title="WMS 3PL API")
 
@@ -103,6 +108,7 @@ def init_db():
     db.receipts.create_index('receipt_number', unique=True)
     db.invoices.create_index('invoice_number', unique=True)
     db.carriers.create_index('code', unique=True)
+    reset_tokens = db['password_reset_tokens']
     
     # Seed carriers
     carriers = [
@@ -1653,6 +1659,13 @@ class ChangePasswordRequest(BaseModel):
     current_password: str
     new_password: str
 
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
 @app.post("/api/users/change-password")
 async def change_password(password_data: dict, request: Request):
     """Changer le mot de passe de l'utilisateur connecté"""
@@ -1747,6 +1760,232 @@ async def get_user_profile(request: Request):
     except Exception as e:
         print(f"Erreur récupération profil: {e}")
         raise HTTPException(status_code=500, detail="Erreur serveur")
+
+
+# ============================================
+# SYSTÈME DE RÉINITIALISATION DE MOT DE PASSE
+# ============================================
+
+def send_reset_email(to_email: str, reset_token: str):
+    """Envoie un email avec le lien de réinitialisation"""
+    
+    # Configuration email
+    SMTP_SERVER = "smtp.gmail.com"
+    SMTP_PORT = 587
+    SMTP_USERNAME = "contact@newstaq.com"
+    SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
+    
+    # URL de réinitialisation
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://app.newstaq.com')
+    reset_link = f"{FRONTEND_URL}/reset-password?token={reset_token}"
+    
+    # Corps de l'email
+    subject = "Réinitialisation de votre mot de passe NEWSTAQ"
+    
+    html_body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+            <div style="background-color: #3b82f6; padding: 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">NEWSTAQ</h1>
+            </div>
+            
+            <div style="background-color: white; padding: 30px; margin-top: 20px; border-radius: 5px;">
+                <h2 style="color: #3b82f6;">Réinitialisation de mot de passe</h2>
+                
+                <p>Bonjour,</p>
+                
+                <p>Vous avez demandé la réinitialisation de votre mot de passe NEWSTAQ.</p>
+                
+                <p>Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{reset_link}" 
+                       style="background-color: #3b82f6; 
+                              color: white; 
+                              padding: 15px 30px; 
+                              text-decoration: none; 
+                              border-radius: 5px; 
+                              display: inline-block;
+                              font-weight: bold;">
+                        Réinitialiser mon mot de passe
+                    </a>
+                </div>
+                
+                <p style="color: #666; font-size: 14px;">
+                    <strong>Ce lien expire dans 1 heure.</strong>
+                </p>
+                
+                <p style="color: #666; font-size: 14px;">
+                    Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. 
+                    Votre mot de passe restera inchangé.
+                </p>
+                
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+                
+                <p style="color: #999; font-size: 12px;">
+                    Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
+                    <a href="{reset_link}" style="color: #3b82f6; word-break: break-all;">{reset_link}</a>
+                </p>
+            </div>
+            
+            <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+                © 2026 NEWSTAQ. Tous droits réservés.
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Créer le message
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = SMTP_USERNAME
+    msg['To'] = to_email
+    
+    # Attacher le corps HTML
+    msg.attach(MIMEText(html_body, 'html'))
+    
+    # Envoyer l'email
+    try:
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+            server.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"Erreur envoi email: {e}")
+        return False
+
+
+@app.post("/api/auth/forgot-password")
+async def forgot_password(request: ForgotPasswordRequest):
+    """Génère un token de réinitialisation et envoie l'email"""
+    
+    email = request.email.lower().strip()
+    
+    # Vérifier si le client existe
+    client_doc = db.clients.find_one({"email": email})
+    
+    if not client_doc:
+        # Ne pas révéler si l'email existe ou non (sécurité)
+        return {
+            "success": True, 
+            "message": "Si cet email existe, vous recevrez un lien de réinitialisation."
+        }
+    
+    # Générer un token unique
+    reset_token = secrets.token_urlsafe(32)
+    
+    # Calculer l'expiration (1 heure)
+    expires_at = datetime.utcnow() + timedelta(hours=1)
+    
+    # Supprimer les anciens tokens pour cet email
+    reset_tokens.delete_many({"email": email})
+    
+    # Sauvegarder le nouveau token
+    reset_tokens.insert_one({
+        "email": email,
+        "token": reset_token,
+        "expires_at": expires_at,
+        "created_at": datetime.utcnow(),
+        "used": False
+    })
+    
+    # Envoyer l'email
+    email_sent = send_reset_email(email, reset_token)
+    
+    if not email_sent:
+        raise HTTPException(
+            status_code=500,
+            detail="Erreur lors de l'envoi de l'email. Veuillez réessayer."
+        )
+    
+    return {
+        "success": True,
+        "message": "Si cet email existe, vous recevrez un lien de réinitialisation."
+    }
+
+
+@app.post("/api/auth/reset-password")
+async def reset_password(request: ResetPasswordRequest):
+    """Valide le token et réinitialise le mot de passe"""
+    
+    token = request.token
+    new_password = request.new_password
+    
+    # Vérifier la longueur du mot de passe
+    if len(new_password) < 6:
+        raise HTTPException(
+            status_code=400,
+            detail="Le mot de passe doit contenir au moins 6 caractères"
+        )
+    
+    # Trouver le token
+    token_doc = reset_tokens.find_one({
+        "token": token,
+        "used": False
+    })
+    
+    if not token_doc:
+        raise HTTPException(
+            status_code=400,
+            detail="Token invalide ou déjà utilisé"
+        )
+    
+    # Vérifier l'expiration
+    if datetime.utcnow() > token_doc['expires_at']:
+        raise HTTPException(
+            status_code=400,
+            detail="Ce lien a expiré. Demandez une nouvelle réinitialisation."
+        )
+    
+    email = token_doc['email']
+    
+    # Mettre à jour le mot de passe du client
+    result = db.clients.update_one(
+        {"email": email},
+        {"$set": {"password": new_password}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Client introuvable"
+        )
+    
+    # Marquer le token comme utilisé
+    reset_tokens.update_one(
+        {"token": token},
+        {"$set": {"used": True, "used_at": datetime.utcnow()}}
+    )
+    
+    return {
+        "success": True,
+        "message": "Mot de passe réinitialisé avec succès"
+    }
+
+
+@app.get("/api/auth/verify-reset-token/{token}")
+async def verify_reset_token(token: str):
+    """Vérifie si un token est valide (sans le consommer)"""
+    
+    token_doc = reset_tokens.find_one({
+        "token": token,
+        "used": False
+    })
+    
+    if not token_doc:
+        return {"valid": False, "message": "Token invalide"}
+    
+    if datetime.utcnow() > token_doc['expires_at']:
+        return {"valid": False, "message": "Token expiré"}
+    
+    return {"valid": True, "email": token_doc['email']}
 
 
 if __name__ == '__main__':

@@ -26,6 +26,8 @@ import './App.css';
 import MentionsLegales from './pages/MentionsLegales';
 import CGV from './pages/CGV';
 import RGPD from './pages/RGPD';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 // Protected route component
 const PrivateRoute = ({ children }) => {
@@ -89,6 +91,8 @@ const AppContent = () => {
           {/* Public Landing Page */}
           <Route path="/" element={isAuthenticated ? (isClient ? <Navigate to="/client" /> : <Navigate to="/dashboard" />) : <LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />  
+          <Route path="/reset-password" element={<ResetPassword />} />    
           <Route path="/" element={<LandingPage />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/cgv" element={<CGV />} />
