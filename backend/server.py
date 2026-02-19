@@ -1951,16 +1951,25 @@ async def reset_password(request: ResetPasswordRequest):
     
     email = token_doc['email']
     
-    # Mettre à jour le mot de passe du client
-    result = db.clients.update_one(
+    # Hasher le nouveau mot de passe avec bcrypt
+    hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Mettre à jour le mot de passe dans la table clients
+    db.clients.update_one(
         {"email": email},
-        {"$set": {"password": new_password}}
+        {"$set": {"password": new_password}}  # En clair pour les clients
     )
     
-    if result.modified_count == 0:
+    # Mettre à jour le mot de passe dans la table users (avec hash bcrypt)
+    result = db.users.update_one(
+        {"email": email},
+        {"$set": {"password": hashed_password}}
+    )
+    
+    if result.matched_count == 0:
         raise HTTPException(
             status_code=404,
-            detail="Client introuvable"
+            detail="Utilisateur introuvable"
         )
     
     # Marquer le token comme utilisé
