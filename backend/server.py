@@ -1774,7 +1774,7 @@ def send_reset_email(to_email: str, reset_token: str):
     # Configuration email
     SMTP_SERVER = "smtp.gmail.com"
     SMTP_PORT = 587
-    SMTP_USERNAME = "contact@newstaq.com"
+    SMTP_USERNAME = "eddy.liang@newstaq.com"
     SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
     
     # URL de réinitialisation
