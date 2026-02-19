@@ -6,6 +6,8 @@ const Clients = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [formData, setFormData] = useState({
     name: '',  // Ajouté pour le backend
     company_name: '',
@@ -217,7 +219,15 @@ const Clients = () => {
             </div>
             
             <div style={styles.clientFooter}>
-              <button style={styles.viewButton}>Voir Détails</button>
+              <button 
+                style={styles.viewButton}
+                onClick={() => {
+                  setSelectedClient(client);
+                  setShowDetailModal(true);
+                }}
+              >
+                Voir Détails
+              </button>
             </div>
           </div>
         ))}
@@ -466,6 +476,139 @@ const Clients = () => {
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de détails */}
+      {showDetailModal && selectedClient && (
+        <div style={styles.modal} onClick={() => setShowDetailModal(false)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Détails du Client</h2>
+              <button 
+                onClick={() => setShowDetailModal(false)}
+                style={styles.closeButton}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{padding: '1.5rem'}}>
+              {/* Informations entreprise */}
+              <div style={styles.section}>
+                <h3 style={styles.sectionTitle}>Informations de l'Entreprise</h3>
+                
+                <div style={styles.detailGrid}>
+                  <div style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Code Client</span>
+                    <span style={styles.detailValue}>{selectedClient.code}</span>
+                  </div>
+                  
+                  <div style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Raison Sociale</span>
+                    <span style={styles.detailValue}>{selectedClient.company_name}</span>
+                  </div>
+                  
+                  {selectedClient.siren && (
+                    <div style={styles.detailItem}>
+                      <span style={styles.detailLabel}>SIREN</span>
+                      <span style={styles.detailValue}>{selectedClient.siren}</span>
+                    </div>
+                  )}
+                  
+                  <div style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Email</span>
+                    <span style={styles.detailValue}>{selectedClient.email}</span>
+                  </div>
+                  
+                  {selectedClient.phone && (
+                    <div style={styles.detailItem}>
+                      <span style={styles.detailLabel}>Téléphone</span>
+                      <span style={styles.detailValue}>{selectedClient.phone}</span>
+                    </div>
+                  )}
+                  
+                  {selectedClient.address && (
+                    <div style={styles.detailItem}>
+                      <span style={styles.detailLabel}>Adresse</span>
+                      <span style={styles.detailValue}>
+                        {selectedClient.address}
+                        {selectedClient.city && `, ${selectedClient.city}`}
+                        {selectedClient.postal_code && ` ${selectedClient.postal_code}`}
+                        {selectedClient.country && `, ${selectedClient.country}`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact */}
+              {(selectedClient.contact_first_name || selectedClient.contact_last_name) && (
+                <div style={styles.section}>
+                  <h3 style={styles.sectionTitle}>Interlocuteur</h3>
+                  
+                  <div style={styles.detailGrid}>
+                    <div style={styles.detailItem}>
+                      <span style={styles.detailLabel}>Nom</span>
+                      <span style={styles.detailValue}>
+                        {selectedClient.contact_first_name} {selectedClient.contact_last_name}
+                      </span>
+                    </div>
+                    
+                    {selectedClient.contact_email && (
+                      <div style={styles.detailItem}>
+                        <span style={styles.detailLabel}>Email</span>
+                        <span style={styles.detailValue}>{selectedClient.contact_email}</span>
+                      </div>
+                    )}
+                    
+                    {selectedClient.contact_phone && (
+                      <div style={styles.detailItem}>
+                        <span style={styles.detailLabel}>Téléphone</span>
+                        <span style={styles.detailValue}>{selectedClient.contact_phone}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Statut */}
+              <div style={styles.section}>
+                <h3 style={styles.sectionTitle}>Statut</h3>
+                
+                <div style={styles.detailGrid}>
+                  <div style={styles.detailItem}>
+                    <span style={styles.detailLabel}>Actif</span>
+                    <span style={{
+                      ...styles.detailValue,
+                      color: selectedClient.active ? '#10b981' : '#ef4444',
+                      fontWeight: '600'
+                    }}>
+                      {selectedClient.active ? 'Oui' : 'Non'}
+                    </span>
+                  </div>
+                  
+                  {selectedClient.created_at && (
+                    <div style={styles.detailItem}>
+                      <span style={styles.detailLabel}>Date de création</span>
+                      <span style={styles.detailValue}>
+                        {new Date(selectedClient.created_at).toLocaleDateString('fr-FR')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div style={styles.modalFooter}>
+                <button 
+                  onClick={() => setShowDetailModal(false)}
+                  style={styles.submitButton}
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -750,6 +893,25 @@ const styles = {
     marginTop: '1rem',
     color: '#f59e0b',
     fontWeight: '500',
+  },
+  detailGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '1rem',
+  },
+  detailItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
+  },
+  detailLabel: {
+    fontSize: '0.875rem',
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  detailValue: {
+    fontSize: '1rem',
+    color: '#0f172a',
   },
 };
 

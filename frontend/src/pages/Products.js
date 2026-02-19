@@ -8,6 +8,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     sku: '',
@@ -65,6 +66,20 @@ const Products = () => {
     setShowEditModal(true);
   };
 
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    
+    try {
+      await api.post('/products', formData);
+      alert('Produit créé avec succès !');
+      setShowCreateModal(false);
+      fetchProducts();
+    } catch (error) {
+      console.error('Erreur création produit:', error);
+      alert('Erreur lors de la création : ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     
@@ -104,7 +119,20 @@ const Products = () => {
           <h1 style={styles.title}>Gestion des Produits</h1>
           <p style={styles.subtitle}>{filteredProducts.length} produit(s)</p>
         </div>
-        <button style={styles.addButton}>
+        <button 
+          style={styles.addButton}
+          onClick={() => {
+            setFormData({
+              sku: '',
+              name: '',
+              description: '',
+              category: '',
+              weight: 0,
+              min_stock_level: 0
+            });
+            setShowCreateModal(true);
+          }}
+        >
           <Plus size={20} />
           Ajouter un Produit
         </button>
@@ -305,6 +333,121 @@ const Products = () => {
                 </button>
                 <button type="submit" style={styles.submitButton}>
                   Enregistrer les Modifications
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de création */}
+      {showCreateModal && (
+        <div style={styles.modal} onClick={() => setShowCreateModal(false)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Ajouter un Nouveau Produit</h2>
+              <button 
+                onClick={() => setShowCreateModal(false)}
+                style={styles.closeButton}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} style={styles.form}>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>SKU *</label>
+                <input
+                  type="text"
+                  value={formData.sku}
+                  onChange={(e) => setFormData({...formData, sku: e.target.value})}
+                  style={styles.input}
+                  placeholder="Ex: PROD-001"
+                  required
+                />
+              </div>
+
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Nom du Produit *</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  style={styles.input}
+                  placeholder="Ex: T-Shirt Blanc M"
+                  required
+                />
+              </div>
+
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Description</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  style={styles.textarea}
+                  rows="3"
+                  placeholder="Description du produit..."
+                />
+              </div>
+
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Catégorie</label>
+                <input
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  style={styles.input}
+                  placeholder="Ex: Textile"
+                />
+              </div>
+
+              <div style={styles.formRow}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>
+                    <Weight size={16} style={{verticalAlign: 'middle', marginRight: '0.25rem'}} />
+                    Poids (grammes) *
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.weight}
+                    onChange={(e) => setFormData({...formData, weight: parseInt(e.target.value) || 0})}
+                    style={styles.input}
+                    min="0"
+                    placeholder="150"
+                    required
+                  />
+                  <span style={styles.helpText}>
+                    Poids unitaire du produit en grammes
+                  </span>
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Seuil de Stock Minimum *</label>
+                  <input
+                    type="number"
+                    value={formData.min_stock_level}
+                    onChange={(e) => setFormData({...formData, min_stock_level: parseInt(e.target.value) || 0})}
+                    style={styles.input}
+                    min="0"
+                    placeholder="10"
+                    required
+                  />
+                  <span style={styles.helpText}>
+                    Alerte si stock inférieur à cette valeur
+                  </span>
+                </div>
+              </div>
+
+              <div style={styles.modalFooter}>
+                <button 
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  style={styles.cancelButton}
+                >
+                  Annuler
+                </button>
+                <button type="submit" style={styles.submitButton}>
+                  Créer le Produit
                 </button>
               </div>
             </form>
