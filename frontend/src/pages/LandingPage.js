@@ -237,8 +237,7 @@ if (typeof document !== 'undefined') {
           <h3 style={styles.benefitTitle}>{t(`landing.benefits.${benefit.key}.title`)}</h3>
           <p style={styles.benefitDescription}>{t(`landing.benefits.${benefit.key}.description`)}</p>
            </div>
-              );
-            })}
+            ))}
           </div>
         </div>
       </section>
