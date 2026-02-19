@@ -44,6 +44,8 @@ DB_NAME = os.environ.get('DB_NAME', 'wms_database')
 # MongoDB connection
 client = MongoClient(MONGO_URL)
 db = client[DB_NAME]
+
+# Collections
 reset_tokens = db['password_reset_tokens']
 
 # Helper to convert ObjectId to string
@@ -1897,13 +1899,20 @@ async def forgot_password(request: ForgotPasswordRequest):
     })
     
     # Envoyer l'email
-    email_sent = send_reset_email(email, reset_token)
+    # TEMPORAIRE : Afficher le lien dans les logs au lieu d'envoyer l'email
+    reset_link = f"https://app.newstaq.com/reset-password?token={reset_token}"
+    print(f"============================================")
+    print(f"RESET PASSWORD LINK FOR: {email}")
+    print(f"LINK: {reset_link}")
+    print(f"TOKEN: {reset_token}")
+    print(f"============================================")
     
-    if not email_sent:
-        raise HTTPException(
-            status_code=500,
-            detail="Erreur lors de l'envoi de l'email. Veuillez réessayer."
-        )
+    # email_sent = send_reset_email(email, reset_token)
+    # if not email_sent:
+    #     raise HTTPException(
+    #         status_code=500,
+    #         detail="Erreur lors de l'envoi de l'email. Veuillez réessayer."
+    #     )
     
     return {
         "success": True,
