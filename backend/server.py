@@ -1681,12 +1681,11 @@ async def change_password(password_data: dict, request: Request):
         if not current_password or not new_password:
             raise HTTPException(status_code=400, detail="Mots de passe requis")
         
-        # Récupérer l'utilisateur (temporairement on utilise l'admin)
-        username = request.headers.get("X-Username")
-        if username:
-            user = db.users.find_one({"username": username})
-        else:
-            user = db.users.find_one({"username": "admin"})
+        # Utiliser get_current_user qui décode le JWT token
+        current_user = get_current_user(request)
+        
+        # Récupérer l'utilisateur complet depuis la base
+        user = db.users.find_one({"_id": ObjectId(current_user["id"])})
         
         if not user:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
@@ -1727,32 +1726,17 @@ async def get_user_profile(request: Request):
     """Récupérer le profil de l'utilisateur connecté"""
     
     try:
-        # SOLUTION TEMPORAIRE : Récupérer l'utilisateur depuis le username dans les headers
-        # ou retourner l'admin par défaut
-        
-        username = request.headers.get("X-Username")
-        
-        if username:
-            user = db.users.find_one({"username": username})
-        else:
-            # Par défaut, retourner l'utilisateur admin
-            user = db.users.find_one({"username": "admin"})
-        
-        if not user:
-            # Si vraiment aucun utilisateur, retourner l'admin par défaut
-            user = db.users.find_one({"role": "admin"})
-        
-        if not user:
-            raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+        # Utiliser get_current_user qui décode le JWT token
+        current_user = get_current_user(request)
         
         # Ne pas renvoyer le mot de passe
         user_data = {
-            "id": str(user["_id"]),
-            "username": user.get("username"),
-            "name": user.get("name"),
-            "email": user.get("email"),
-            "role": user.get("role"),
-            "client_id": user.get("client_id")
+            "id": current_user.get("id"),
+            "username": current_user.get("username"),
+            "name": current_user.get("name"),
+            "email": current_user.get("email"),
+            "role": current_user.get("role"),
+            "client_id": current_user.get("client_id")
         }
         
         return user_data
