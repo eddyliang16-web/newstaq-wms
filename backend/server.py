@@ -1422,6 +1422,54 @@ async def update_product(product_id: str, product_data: ProductUpdate, request: 
     
     return {"success": True, "message": "Produit mis à jour"}
 
+
+@app.delete("/api/products/{product_id}")
+async def delete_product(product_id: str, request: Request):
+    """Supprimer un produit"""
+    
+    try:
+        # Vérifier que l'utilisateur est authentifié
+        current_user = get_current_user(request)
+        
+        # Vérifier que le produit existe
+        product = db.products.find_one({"_id": ObjectId(product_id)})
+        
+        if not product:
+            raise HTTPException(status_code=404, detail="Produit non trouvé")
+        
+        # Vérifier les permissions
+        # Admin peut tout supprimer
+        # Client ne peut supprimer que ses propres produits
+        if current_user['role'] == 'client':
+            if str(product.get('client_id')) != current_user.get('client_id'):
+                raise HTTPException(status_code=403, detail="Non autorisé à supprimer ce produit")
+        
+        # Vérifier si le produit a du stock
+        inventory_count = db.inventory.count_documents({"product_id": ObjectId(product_id), "quantity": {"$gt": 0}})
+        
+        if inventory_count > 0:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Impossible de supprimer ce produit : il a du stock en entrepôt ({inventory_count} emplacement(s))"
+            )
+        
+        # Supprimer le produit
+        result = db.products.delete_one({"_id": ObjectId(product_id)})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
+        
+        return {
+            "success": True,
+            "message": "Produit supprimé avec succès"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erreur suppression produit: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============================================================================
 # 3. RÉCEPTIONS - Création manuelle et détails
 # ============================================================================
