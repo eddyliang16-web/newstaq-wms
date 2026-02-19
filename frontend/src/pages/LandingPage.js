@@ -287,11 +287,11 @@ if (typeof document !== 'undefined') {
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.storage.pallet')}</span>
-                  <span style={styles.priceValue}>10€ / mois</span>
+                  <span style={styles.priceValue}>10€ {t('landing.pricing.units.perMonth')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.storage.cubic')}</span>
-                  <span style={styles.priceValue}>7€ / m³ / mois</span>
+                  <span style={styles.priceValue}>7€ {t('landing.pricing.units.perCubic')}</span>
                 </div>
               </div>
             </div>
@@ -305,15 +305,15 @@ if (typeof document !== 'undefined') {
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.inbound.pallet')}</span>
-                  <span style={styles.priceValue}>3€ / palette</span>
+                  <span style={styles.priceValue}>3€ {t('landing.pricing.units.perPallet')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.inbound.parcel')}</span>
-                  <span style={styles.priceValue}>1€ / colis</span>
+                  <span style={styles.priceValue}>1€ {t('landing.pricing.units.perParcel')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.inbound.entry')}</span>
-                  <span style={styles.priceValue}>2,50€ / SKU</span>
+                  <span style={styles.priceValue}>2,50€ {t('landing.pricing.units.perSKU')}</span>
                 </div>
               </div>
             </div>
@@ -327,23 +327,23 @@ if (typeof document !== 'undefined') {
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.outbound.pickpack')}</span>
-                  <span style={styles.priceValue}>2,80€ / commande</span>
+                  <span style={styles.priceValue}>2,80€ {t('landing.pricing.units.perOrder')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.outbound.additional')}</span>
-                  <span style={styles.priceValue}>+0,20€ / article</span>
+                  <span style={styles.priceValue}>+0,20€ {t('landing.pricing.units.perItem')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.outbound.custom')}</span>
-                  <span style={styles.priceValue}>Sur devis</span>
+                  <span style={styles.priceValue}>{t('landing.pricing.units.onQuote')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.outbound.packaging')}</span>
-                  <span style={styles.priceValue}>Sur devis</span>
+                  <span style={styles.priceValue}>{t('landing.pricing.units.onQuote')}</span>
                 </div>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.outbound.shipping')}</span>
-                  <span style={styles.priceValue}>Selon transporteur</span>
+                  <span style={styles.priceValue}>{t('landing.pricing.units.accordingToCarrier')}</span>
                 </div>
               </div>
             </div>
@@ -357,7 +357,7 @@ if (typeof document !== 'undefined') {
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.returns.processing')}</span>
-                  <span style={styles.priceValue}>2,20€ / retour</span>
+                  <span style={styles.priceValue}>2,20€ {t('landing.pricing.units.perReturn')}</span>
                 </div>
               </div>
             </div>
@@ -371,7 +371,7 @@ if (typeof document !== 'undefined') {
               <div style={styles.categoryBody}>
                 <div style={styles.priceItem}>
                 <span style={styles.priceService}>{t('landing.pricing.insurance.description')}</span>
-                  <span style={styles.priceValue}>Sur devis</span>
+                  <span style={styles.priceValue}>{t('landing.pricing.units.onQuote')}</span>
                 </div>
               </div>
             </div>

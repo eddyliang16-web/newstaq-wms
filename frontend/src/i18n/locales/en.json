@@ -69,6 +69,18 @@
     "pricing": {
       "title": "Transparent Pricing",
       "subtitle": "Clear and competitive prices tailored to your business",
+      "units": {
+        "perMonth": "/ month",
+        "perPallet": "/ pallet",
+        "perParcel": "/ parcel",
+        "perSKU": "/ SKU",
+        "perOrder": "/ order",
+        "perItem": "/ item",
+        "perReturn": "/ return",
+        "perCubic": "/ m³ / month",
+        "onQuote": "On quote",
+        "accordingToCarrier": "According to carrier"
+      },
       "storage": {
         "title": "Storage",
         "pallet": "Standard EU pallet 80cm x 120cm x 150cm",
@@ -159,98 +171,11 @@
       "notifications": "Notifications",
       "profile": "My Profile",
       "logout": "Logout"
-    },
-    "dashboard": {
-      "title": "Administrator Dashboard",
-      "totalClients": "Active Clients",
-      "totalProducts": "Products in Stock",
-      "pendingOrders": "Pending Orders",
-      "monthlyRevenue": "Monthly Revenue",
-      "recentOrders": "Recent Orders",
-      "lowStock": "Low Stock Products"
-    },
-    "clients": {
-      "title": "Client Management",
-      "createNew": "Create New Client",
-      "active": "active",
-      "viewDetails": "View Details",
-      "form": {
-        "companyName": "Company Name",
-        "email": "Email",
-        "phone": "Phone",
-        "address": "Address",
-        "city": "City",
-        "postalCode": "Postal Code",
-        "country": "Country",
-        "siren": "SIREN Number",
-        "contactInfo": "Contact Information",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "contactEmail": "Email",
-        "contactPhone": "Phone",
-        "cancel": "Cancel",
-        "create": "Create Client",
-        "success": "Client created successfully!",
-        "error": "Error creating client"
-      }
-    },
-    "products": {
-      "title": "Product Management",
-      "search": "Search product...",
-      "filter": "Filter by client",
-      "allClients": "All clients",
-      "addProduct": "Add Product",
-      "inStock": "In stock",
-      "lowStock": "Low stock",
-      "outOfStock": "Out of stock"
-    },
-    "orders": {
-      "title": "Order Management",
-      "filter": "Filter by status",
-      "all": "All",
-      "pending": "Pending",
-      "processing": "Processing",
-      "shipped": "Shipped",
-      "delivered": "Delivered",
-      "cancelled": "Cancelled"
-    }
-  },
-  "client": {
-    "nav": {
-      "dashboard": "Dashboard",
-      "products": "My Products",
-      "orders": "My Orders",
-      "inventory": "My Inventory",
-      "receptions": "Receptions",
-      "invoices": "Invoices",
-      "notifications": "Notifications",
-      "profile": "My Profile",
-      "logout": "Logout"
-    },
-    "dashboard": {
-      "title": "Client Dashboard",
-      "welcome": "Welcome",
-      "totalProducts": "Products in Stock",
-      "pendingOrders": "Pending Orders",
-      "recentReceptions": "Recent Receptions",
-      "monthlyActivity": "Monthly Activity"
     }
   },
   "common": {
     "loading": "Loading...",
     "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "view": "View",
-    "close": "Close",
-    "confirm": "Confirm",
-    "yes": "Yes",
-    "no": "No",
-    "search": "Search...",
-    "filter": "Filter",
-    "export": "Export",
-    "import": "Import",
-    "refresh": "Refresh"
+    "cancel": "Cancel"
   }
 }

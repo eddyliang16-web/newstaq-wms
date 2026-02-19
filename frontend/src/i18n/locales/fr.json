@@ -69,6 +69,18 @@
     "pricing": {
       "title": "Tarification Transparente",
       "subtitle": "Des prix clairs et compétitifs adaptés à votre activité",
+      "units": {
+        "perMonth": "/ mois",
+        "perPallet": "/ palette",
+        "perParcel": "/ colis",
+        "perSKU": "/ SKU",
+        "perOrder": "/ commande",
+        "perItem": "/ article",
+        "perReturn": "/ retour",
+        "perCubic": "/ m³ / mois",
+        "onQuote": "Sur devis",
+        "accordingToCarrier": "Selon transporteur"
+      },
       "storage": {
         "title": "Stockage",
         "pallet": "Palette EU standard 80cm x 120cm x 150cm",
@@ -159,98 +171,11 @@
       "notifications": "Notifications",
       "profile": "Mon Profil",
       "logout": "Déconnexion"
-    },
-    "dashboard": {
-      "title": "Tableau de Bord Administrateur",
-      "totalClients": "Clients Actifs",
-      "totalProducts": "Produits en Stock",
-      "pendingOrders": "Commandes en Attente",
-      "monthlyRevenue": "CA du Mois",
-      "recentOrders": "Commandes Récentes",
-      "lowStock": "Produits en Stock Faible"
-    },
-    "clients": {
-      "title": "Gestion des Clients",
-      "createNew": "Créer un Nouveau Client",
-      "active": "actif(s)",
-      "viewDetails": "Voir Détails",
-      "form": {
-        "companyName": "Nom de l'Entreprise",
-        "email": "Email",
-        "phone": "Téléphone",
-        "address": "Adresse",
-        "city": "Ville",
-        "postalCode": "Code Postal",
-        "country": "Pays",
-        "siren": "Numéro SIREN",
-        "contactInfo": "Coordonnées de l'Interlocuteur",
-        "firstName": "Prénom",
-        "lastName": "Nom",
-        "contactEmail": "Email",
-        "contactPhone": "Téléphone",
-        "cancel": "Annuler",
-        "create": "Créer le Client",
-        "success": "Client créé avec succès !",
-        "error": "Erreur lors de la création du client"
-      }
-    },
-    "products": {
-      "title": "Gestion des Produits",
-      "search": "Rechercher un produit...",
-      "filter": "Filtrer par client",
-      "allClients": "Tous les clients",
-      "addProduct": "Ajouter un Produit",
-      "inStock": "En stock",
-      "lowStock": "Stock faible",
-      "outOfStock": "Rupture"
-    },
-    "orders": {
-      "title": "Gestion des Commandes",
-      "filter": "Filtrer par statut",
-      "all": "Toutes",
-      "pending": "En attente",
-      "processing": "En préparation",
-      "shipped": "Expédiée",
-      "delivered": "Livrée",
-      "cancelled": "Annulée"
-    }
-  },
-  "client": {
-    "nav": {
-      "dashboard": "Tableau de bord",
-      "products": "Mes Produits",
-      "orders": "Mes Commandes",
-      "inventory": "Mon Inventaire",
-      "receptions": "Réceptions",
-      "invoices": "Factures",
-      "notifications": "Notifications",
-      "profile": "Mon Profil",
-      "logout": "Déconnexion"
-    },
-    "dashboard": {
-      "title": "Tableau de Bord Client",
-      "welcome": "Bienvenue",
-      "totalProducts": "Produits en Stock",
-      "pendingOrders": "Commandes en Cours",
-      "recentReceptions": "Réceptions Récentes",
-      "monthlyActivity": "Activité du Mois"
     }
   },
   "common": {
     "loading": "Chargement...",
     "save": "Enregistrer",
-    "cancel": "Annuler",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "view": "Voir",
-    "close": "Fermer",
-    "confirm": "Confirmer",
-    "yes": "Oui",
-    "no": "Non",
-    "search": "Rechercher...",
-    "filter": "Filtrer",
-    "export": "Exporter",
-    "import": "Importer",
-    "refresh": "Actualiser"
+    "cancel": "Annuler"
   }
 }
