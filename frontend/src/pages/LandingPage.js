@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import api from '../services/api';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { 
   Package, Warehouse, ShoppingCart, TrendingUp, 
@@ -51,29 +52,16 @@ if (typeof document !== 'undefined') {
     setFormStatus({ type: '', message: '' });
 
     try {
-      const response = await fetch('https://api.newstaq.com/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+      await api.post('/contact', formData);
+      setFormStatus({
+        type: 'success',
+        message: t('landing.contact.form.success')
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setFormStatus({
-          type: 'success',
-          message: t('landing.contact.form.success')
-        });
-        setFormData({ name: '', company: '', email: '', phone: '', message: '' });
-      } else {
-        throw new Error(data.detail || t('landing.contact.form.error'));
-      }
+      setFormData({ name: '', company: '', email: '', phone: '', message: '' });
     } catch (error) {
       setFormStatus({
         type: 'error',
-        message: t('landing.contact.form.error')
+        message: error.response?.data?.detail || t('landing.contact.form.error')
       });
       console.error('Erreur:', error);
     } finally {

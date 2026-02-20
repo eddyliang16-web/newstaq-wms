@@ -65,8 +65,8 @@ const Dashboard = () => {
             <Package size={24} />
             <h3 className="text-sm font-medium uppercase opacity-90">Produits</h3>
           </div>
-          <p className="text-4xl font-bold">{stats?.stock?.total_products || 0}</p>
-          <p className="text-sm opacity-80 mt-2">{stats?.stock?.total_quantity || 0} unités en stock</p>
+          <p className="text-4xl font-bold">{stats?.products?.product_count || 0}</p>
+          <p className="text-sm opacity-80 mt-2">{stats?.products?.total_stock || 0} unités en stock</p>
         </div>
 
         <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl p-6 shadow-lg">

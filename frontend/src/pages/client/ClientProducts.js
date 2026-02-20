@@ -160,29 +160,23 @@ const ClientProducts = () => {
           <h1 style={styles.title}>Mes Produits</h1>
           <p style={styles.subtitle}>{filteredProducts.length} produit(s)</p>
         </div>
-        <div style={styles.header}>
-          <div>
-            <h1 style={styles.title}>Mes Produits</h1>
-            <p style={styles.subtitle}>{filteredProducts.length} produit(s)</p>
-          </div>
-          <button 
-            style={styles.addButton}
-            onClick={() => {
-              setFormData({
-                sku: '',
-                name: '',
-                description: '',
-                category: '',
-                weight: 0,
-                min_stock_level: 0
-              });
-              setShowCreateModal(true);
-            }}
-          >
-            <Plus size={20} />
-            Ajouter un Produit
-          </button>
-        </div>
+        <button
+          style={styles.addButton}
+          onClick={() => {
+            setFormData({
+              sku: '',
+              name: '',
+              description: '',
+              category: '',
+              weight: 0,
+              min_stock_level: 0
+            });
+            setShowCreateModal(true);
+          }}
+        >
+          <Plus size={20} />
+          Ajouter un Produit
+        </button>
       </div>
 
       {/* Barre de recherche */}
@@ -256,32 +250,23 @@ const ClientProducts = () => {
                     </span>
                   </td>
                   <td style={styles.td}>
-                    <button 
+                    <button
                       onClick={() => handleEdit(product)}
                       style={styles.editButton}
                       title="Modifier"
                     >
                       <Edit2 size={16} />
                     </button>
-                    <td style={styles.td}>
-                      <button 
-                        onClick={() => handleEdit(product)}
-                        style={styles.editButton}
-                        title="Modifier"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setProductToDelete(product);
-                          setShowDeleteConfirm(true);
-                        }}
-                        style={styles.deleteButton}
-                        title="Supprimer"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
+                    <button
+                      onClick={() => {
+                        setProductToDelete(product);
+                        setShowDeleteConfirm(true);
+                      }}
+                      style={styles.deleteButton}
+                      title="Supprimer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </td>
                 </tr>
               );

@@ -1229,15 +1229,57 @@ def get_notification_history(request: Request, limit: int = 50):
 @app.get('/api/notifications/settings')
 def get_notification_settings(request: Request, client_id: Optional[str] = None):
     user = get_current_user(request)
-    
+
     query = {}
     if user['role'] == 'client':
         query['client_id'] = user['client_id']
     elif client_id:
         query['client_id'] = client_id
-    
+
     settings = list(db.notification_settings.find(query))
     return serialize_doc(settings)
+
+@app.get('/api/notifications/alert-settings')
+def get_alert_settings(request: Request):
+    user = get_current_user(request)
+
+    query = {}
+    if user['role'] == 'client':
+        query['client_id'] = user['client_id']
+
+    settings = list(db.notification_settings.find(query))
+    return serialize_doc(settings)
+
+@app.post('/api/notifications/check-alerts')
+def check_alerts(request: Request):
+    user = get_current_user(request)
+    alerts_sent = 0
+
+    query = {}
+    if user['role'] == 'client':
+        query['client_id'] = user['client_id']
+
+    products = list(db.products.find(query))
+    for product in products:
+        product_id = str(product['_id'])
+        stock_result = list(db.inventory.aggregate([
+            {'$match': {'product_id': product_id}},
+            {'$group': {'_id': None, 'total': {'$sum': '$quantity'}}}
+        ]))
+        current_stock = stock_result[0]['total'] if stock_result else 0
+        min_level = product.get('min_stock_level', 0)
+
+        if current_stock < min_level:
+            db.email_notifications.insert_one({
+                'type': 'low_stock',
+                'recipient': user.get('username', ''),
+                'subject': f"Stock faible : {product.get('name', '')}",
+                'status': 'pending',
+                'created_at': datetime.utcnow().isoformat()
+            })
+            alerts_sent += 1
+
+    return {'alertsSent': alerts_sent}
 
 # ==================== LOCATIONS ====================
 @app.get('/api/locations')
@@ -1989,7 +2031,7 @@ async def reset_password(request: ResetPasswordRequest):
     # Mettre à jour le mot de passe dans la table clients
     db.clients.update_one(
         {"email": email},
-        {"$set": {"password": new_password}}  # En clair pour les clients
+        {"$set": {"password": hashed_password}}
     )
     
     # Mettre à jour le mot de passe dans la table users (avec hash bcrypt)
